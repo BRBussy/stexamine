@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core'
 import {Router, publicRoutes} from 'route';
-import background from 'assets/background.png'
 import Header from "components/Header";
 import Sidebar from "components/Sidebar";
 import cx from 'classnames';
@@ -12,10 +11,6 @@ const drawerMiniWidth = 80;
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        backgroundImage: `url(${background})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
         overflow: 'hidden'
     },
     mainPanel: {
