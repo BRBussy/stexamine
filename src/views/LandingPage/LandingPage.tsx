@@ -75,17 +75,25 @@ export default function LandingPage() {
             </Card>
             {transaction &&
             <Card>
-                <CardHeader
-                    title={'Transaction Details'}
-                    titleTypographyProps={{variant: 'h6'}}
-                />
                 <CardContent className={classes.transactionDetailsCardContent}>
                     <Grid container spacing={2}>
                         <Grid item>
-                            <DisplayField
-                                label={'Sequence'}
-                                value={transaction.sequence}
-                            />
+                            <Card className={classes.bodyCard}>
+                                <CardContent>
+                                    <DisplayField
+                                        label={'Sequence'}
+                                        value={transaction.sequence}
+                                    />
+                                    <DisplayField
+                                        label={'Source Account'}
+                                        value={transaction.source}
+                                    />
+                                    <DisplayField
+                                        label={'Network'}
+                                        value={transaction.networkPassphrase}
+                                    />
+                                </CardContent>
+                            </Card>
                         </Grid>
                         <Grid item>
                             <Card className={classes.bodyCard}>
