@@ -1,30 +1,30 @@
 import React, {useEffect, useState} from 'react'
-import {makeStyles, Card, CardContent, FormHelperText, CardHeader, TextareaAutosize, Theme} from '@material-ui/core'
-import {xdr} from 'stellar-sdk';
-import cx from 'classnames';
+import {
+    makeStyles,
+    Card,
+    CardContent,
+    CardHeader,
+    Theme,
+    TextField, Grid
+} from '@material-ui/core'
+import {xdr, Transaction, Networks} from 'stellar-sdk';
+import {DisplayField} from 'components/Form'
+import moment from "moment";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
-        display: 'flex',
-        justifyContent: 'center'
-    },
-    textArea: {
-        color: theme.palette.text.primary,
-        fontSize: 16,
-        backgroundColor: theme.palette.background.paper,
-        width: 508,
-        maxWidth: 508
-    },
-    textAreaError: {
-        border: `1px solid ${theme.palette.error.main}`
+        display: 'grid',
+        gridTemplateColumns: 'auto',
+        gridRowGap: theme.spacing(1)
     }
 }));
 
 export default function LandingPage() {
     const classes = useStyles();
-    const [xdrString, setXDRString] = useState('');
+    const [xdrString, setXDRString] = useState('AAAAADfgrQSRzlutL3WDCb7QM9k7RdfYvYUcArUyy3VZ64TfAAABLAAD5EMAAAAVAAAAAQAAAABevduAAAAAAF7Afn8AAAAAAAAAAwAAAAEAAAAAGlj/gfWolVfZU/kXk4srlV3GChC3uuYQ1pC6D3abTzQAAAABAAAAAMnpsRnPNl5hPiuVrkhedYFEvJAQ3YmA36SO0UyyJs86AAAAAVpBUgAAAAAAkO9W/jxlIO4CicPesRrvbUhm/5O1ANrEajZDqGOC1J8AAAAAHc1lAAAAAAEAAAAAGlj/gfWolVfZU/kXk4srlV3GChC3uuYQ1pC6D3abTzQAAAABAAAAAC9NUv6pcCKw68E5kP35roXIeDrXNx8vAy+vOYz4ftsvAAAAAkRCMDREMgAAAAAAAAAAAABy51j5jb+OBXwRwTB16HcXMepK65JsYSD+fSwZnFp0ngAAAAAAmJaAAAAAAQAAAAAvTVL+qXAisOvBOZD9+a6FyHg61zcfLwMvrzmM+H7bLwAAAAEAAAAAGlj/gfWolVfZU/kXk4srlV3GChC3uuYQ1pC6D3abTzQAAAABWkFSAAAAAACQ71b+PGUg7gKJw96xGu9tSGb/k7UA2sRqNkOoY4LUnwAAAOjUpRAAAAAAAAAAAANZ64TfAAAAQPe8yaw5vuBwgMknQlSQREQ6GIGZGuHih0MLvfkiH3OgshD/CcFnkgwbS/ahHMCdSNCqXpEtkbV+JDliKEWx4gtQc27WAAAAQNc+iwe9L+4naCRjBANfMZp4BzWeTx5wbybS3H5l8DJVPnncNa0gQitcxkaPIRyeXInFuq4dDMzxqHkGqhVFYgC2a7+bAAAAQNP2NMSYbOS0Ygb3py/nPoTPJCyFml0Bhf/6qdtT9Lz+Ggbw4s6z7sZ6qLuKTDOjoEHmrf0Itghtvt2jiFTK3AE=');
     const [loading, setLoading] = useState(false);
     const [parsingError, setParsingError] = useState(false);
+    const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
 
     useEffect(() => {
         if (!xdrString) {
@@ -34,7 +34,8 @@ export default function LandingPage() {
             setLoading(true);
             setParsingError(false);
             try {
-                console.log(xdr.TransactionEnvelope.fromXDR(xdrString, "base64"));
+                const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(xdrString, "base64");
+                setTransaction(new Transaction(transactionEnvelope, Networks.TESTNET));
             } catch (e) {
                 console.error('error parsing transaction xdr', e);
             }
@@ -43,6 +44,8 @@ export default function LandingPage() {
         })()
     }, [xdrString])
 
+    console.log(transaction)
+
     return (
         <div className={classes.root}>
             <Card>
@@ -50,23 +53,54 @@ export default function LandingPage() {
                     title={'Transaction'}
                 />
                 <CardContent>
-                    <TextareaAutosize
-                        rows={9}
-                        rowsMax={9}
+                    <TextField
+                        fullWidth
+                        label={'Transaction base64 XDR'}
                         value={xdrString}
                         onChange={(e) => setXDRString(e.target.value)}
                         placeholder={'bas64 transaction XDR'}
-                        className={cx(
-                            classes.textArea,
-                            {[classes.textAreaError]: parsingError}
-                        )}
+                        error={parsingError}
+                        helperText={parsingError ? 'unable to parse' : undefined}
                     />
-                    {parsingError &&
-                    <FormHelperText>
-                        Unable to parse xdr
-                    </FormHelperText>
-                    }
                 </CardContent>
+            </Card>
+            <Card>
+                {transaction &&
+                <CardContent>
+                    <Grid container spacing={2}>
+                        <Grid item>
+                            <DisplayField
+                                label={'Sequence'}
+                                value={transaction.sequence}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <Card>
+                                <CardHeader
+                                    title={'Time-bounds'}
+                                    titleTypographyProps={{variant: 'body1'}}
+                                />
+                                <CardContent>
+                                    {transaction.timeBounds
+                                        ? (
+                                            <React.Fragment>
+                                                <DisplayField
+                                                    label={'Start'}
+                                                    value={moment.unix(+transaction.timeBounds.minTime).format('LLL')}
+                                                />
+                                                <DisplayField
+                                                    label={'End'}
+                                                    value={moment.unix(+transaction.timeBounds.maxTime).format('LLL')}
+                                                />
+                                            </React.Fragment>
+                                        )
+                                        : 'not set'
+                                    }
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    </Grid>
+                </CardContent>}
             </Card>
         </div>
     )

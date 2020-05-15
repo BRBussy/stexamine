@@ -7,6 +7,19 @@ export const defaultTheme = createMuiTheme({
             margin: 'dense'
         }
     },
+    overrides: {
+        MuiCardHeader: {
+            root: {
+                padding: '8px'
+            },
+        },
+        MuiCardContent: {
+            root: {
+                borderTop: '1px solid rgba(255, 255, 255, 0.12)',
+                padding: '8px'
+            }
+        }
+    },
     shape: {
         borderRadius: 4
     },
