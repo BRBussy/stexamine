@@ -1,0 +1,32 @@
+steps:
+  # Step #0: firebase token
+  - name: gcr.io/cloud-builders/gcloud
+    id: 'decrypt auth config file'
+    args:
+      - kms
+      - decrypt
+      - --ciphertext-file=ci/firebase-token.enc
+      - --plaintext-file=ci/firebase-token
+      - --location=global
+      - --keyring=bizzle
+      - --key=cryptographer
+    waitFor: ['-']
+
+  # Step #1: install dependencies and build
+  - name: node
+    id: 'install dependencies and build'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        yarn install
+        yarn build
+    waitFor: ['-']
+
+  # Step #2: deploy
+  - name: tbcloud/docker-firebase
+    id: 'deploy'
+    args:
+      - '-c'
+      - |
+        firebase deploy --only hosting:oc-bucket --token $(cat ci/firebase-token)
