@@ -1,6 +1,7 @@
 import React from 'react';
-import {Route as ReactRouterRoute, Switch} from 'react-router';
+import {Route as ReactRouterRoute, Switch, Redirect} from 'react-router';
 import {Route} from './Route';
+import {defaultRoute} from "./routes";
 
 interface RouterProps {
     routes: Route[];
@@ -45,6 +46,10 @@ const Router = (props: RouterProps) => {
     return (
         <Switch>
             {routesToRender}
+            <ReactRouterRoute
+                path={'/'}
+                component={() => (<Redirect to={defaultRoute.path}/>)}
+            />
         </Switch>
     );
 };
