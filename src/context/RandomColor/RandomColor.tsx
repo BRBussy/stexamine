@@ -11,7 +11,8 @@ const disallowedColors: string[] = [
     '#000000',
     '#424242',
     '#303030',
-    '#7aa2c9'
+    '#7aa2c9',
+    '#354cbd'
 ]
 
 function getRandomColor() {

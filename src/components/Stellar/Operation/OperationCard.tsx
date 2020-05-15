@@ -37,12 +37,12 @@ export default function OperationCard(props: OperationCardProps) {
                             value={props.operation.type}
                         />
                         <DisplayField
-                            label={'Source'}
+                            label={'Source Account'}
                             value={operationSourceAccount}
                             valueTypographyProps={{style: {color: getRandomColor(operationSourceAccount)}}}
                         />
                         <DisplayField
-                            label={'Destination'}
+                            label={'Destination Account'}
                             value={paymentOperation.destination}
                             valueTypographyProps={{style: {color: getRandomColor(paymentOperation.destination)}}}
                         />

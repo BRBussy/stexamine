@@ -1,14 +1,9 @@
 import {Route} from './Route';
-import LandingPage from 'views/LandingPage';
-import Login from 'views/Login';
+import Transaction from "views/Transaction/Transaction";
 
 export const publicRoutes: Route[] = [
     {
-        path: '/',
-        component: LandingPage
-    },
-    {
-        path: '/login',
-        component: Login
+        path: '/transaction',
+        component: Transaction
     }
 ]
