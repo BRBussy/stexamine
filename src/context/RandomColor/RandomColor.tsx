@@ -58,45 +58,47 @@ function colorsAreClose(color1: string, color2: string): boolean {
 export default function RandomColorContext({children}: { children?: React.ReactNode }) {
     const [colorMap, setColorMap] = useState<{ [key: string]: string }>({});
 
+    const getRandomColorFunc = (key: string) => {
+        // check if a color has been stored for this key
+        if (colorMap[key]) {
+            // if one already has, return it
+            return colorMap[key]
+        }
+
+        // otherwise generate a new random color
+        let newColor = getRandomColor();
+
+        // while this newColor is
+        while (
+            // already included in the color map OR
+        Object.values(colorMap).includes(newColor) ||
+
+        // it is similar to one of the values already included in the color map OR
+        ([...Object.values(colorMap), ...disallowedColors]).reduce((previousValue: boolean, currentValue: string) => (
+            previousValue ? previousValue : colorsAreClose(newColor, currentValue)
+        ), false) ||
+
+        // it is one of the disallowed colors
+        disallowedColors.includes(newColor)
+            ) {
+            // generate another one
+            newColor = getRandomColor();
+        }
+
+        // store it
+        setColorMap({
+            ...colorMap,
+            [key]: newColor
+        })
+
+        // return in
+        return newColor
+    }
+
     return (
         <RandomColor.Provider
             value={{
-                getRandomColor: (key: string) => {
-                    // check if a color has been stored for this key
-                    if (colorMap[key]) {
-                        // if one already has, return it
-                        return colorMap[key]
-                    }
-
-                    // otherwise generate a new random color
-                    let newColor = getRandomColor();
-
-                    // while this newColor is
-                    while (
-                        // already included in the color map OR
-                    Object.values(colorMap).includes(newColor) ||
-
-                    // it is similar to one of the values already included in the color map OR
-                    ([...Object.values(colorMap), ...disallowedColors]).reduce((previousValue: boolean, currentValue: string) => (
-                        previousValue ? previousValue : colorsAreClose(newColor, currentValue)
-                    ), false) ||
-
-                    // it is one of the disallowed colors
-                    disallowedColors.includes(newColor)
-                        ) {
-                        // generate another one
-                        newColor = getRandomColor();
-                    }
-
-                    // store it
-                    setColorMap({
-                        ...colorMap,
-                        [key]: newColor
-                    })
-
-                    // return in
-                    return newColor
-                }
+                getRandomColor: getRandomColorFunc
             }}
         >
             {children}

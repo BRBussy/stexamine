@@ -26,9 +26,15 @@ export default function OperationCard(props: OperationCardProps) {
             ? props.transactionSource
             : 'no source'
 
+    const operationSourceAccountColor = getRandomColor(operationSourceAccount);
+
     switch (props.operation.type) {
         case "payment":
             const paymentOperation = props.operation as Operation.Payment;
+            const destinationAccountColor = getRandomColor(paymentOperation.destination)
+            const assetColor = getRandomColor(paymentOperation.asset.code);
+            const assetIssuanceAccountColor = getRandomColor(paymentOperation.asset.issuer)
+
             return (
                 <Card className={classes.bodyCard}>
                     <CardContent>
@@ -39,17 +45,17 @@ export default function OperationCard(props: OperationCardProps) {
                         <DisplayField
                             label={'Source Account'}
                             value={operationSourceAccount}
-                            valueTypographyProps={{style: {color: getRandomColor(operationSourceAccount)}}}
+                            valueTypographyProps={{style: {color: operationSourceAccountColor}}}
                         />
                         <DisplayField
                             label={'Destination Account'}
                             value={paymentOperation.destination}
-                            valueTypographyProps={{style: {color: getRandomColor(paymentOperation.destination)}}}
+                            valueTypographyProps={{style: {color: destinationAccountColor}}}
                         />
                         <DisplayField
                             label={'Amount'}
                             value={paymentOperation.amount}
-                            valueTypographyProps={{style: {color: getRandomColor(paymentOperation.asset.code)}}}
+                            valueTypographyProps={{style: {color: assetColor}}}
                         />
                         <Grid container>
                             <Grid item>
@@ -62,12 +68,12 @@ export default function OperationCard(props: OperationCardProps) {
                                         <DisplayField
                                             label={'Code'}
                                             value={paymentOperation.asset.code}
-                                            valueTypographyProps={{style: {color: getRandomColor(paymentOperation.asset.code)}}}
+                                            valueTypographyProps={{style: {color: assetColor}}}
                                         />
                                         <DisplayField
                                             label={'Issuer'}
                                             value={paymentOperation.asset.issuer}
-                                            valueTypographyProps={{style: {color: getRandomColor(paymentOperation.asset.issuer)}}}
+                                            valueTypographyProps={{style: {color: assetIssuanceAccountColor}}}
                                         />
                                     </CardContent>
                                 </Card>

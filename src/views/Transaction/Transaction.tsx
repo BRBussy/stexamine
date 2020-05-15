@@ -5,12 +5,13 @@ import {
     CardContent,
     CardHeader,
     Theme,
-    TextField, Grid
+    TextareaAutosize, Grid
 } from '@material-ui/core'
 import {xdr, Transaction, Networks} from 'stellar-sdk';
 import {DisplayField} from 'components/Form'
 import moment from "moment";
-import {OperationCard} from 'components/Stellar/Operation'
+import OperationCard from './OperationCard';
+import cx from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -26,6 +27,14 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: 'grid',
         gridTemplateColumns: 'auto',
         gridRowGap: theme.spacing(1)
+    },
+    textArea: {
+        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.background.paper,
+        width: 'calc(100vw - 20vw)',
+    },
+    textAreaError: {
+        border: `2px solid ${theme.palette.error.main}`
     }
 }));
 
@@ -48,8 +57,8 @@ export default function LandingPage() {
                 setTransaction(new Transaction(transactionEnvelope, Networks.TESTNET));
             } catch (e) {
                 console.error('error parsing transaction xdr', e);
+                setParsingError(true);
             }
-            setParsingError(false);
             setLoading(false);
         })()
     }, [xdrString])
@@ -64,14 +73,16 @@ export default function LandingPage() {
                     titleTypographyProps={{variant: 'h6'}}
                 />
                 <CardContent>
-                    <TextField
-                        fullWidth
-                        label={'Transaction base64 XDR'}
+                    <TextareaAutosize
+                        spellCheck={false}
+                        rows={7}
                         value={xdrString}
+                        placeholder={'Transaction base64 XDR string'}
+                        className={cx(
+                            classes.textArea,
+                            { [classes.textAreaError]: parsingError }
+                        )}
                         onChange={(e) => setXDRString(e.target.value)}
-                        placeholder={'bas64 transaction XDR'}
-                        error={parsingError}
-                        helperText={parsingError ? 'unable to parse' : undefined}
                     />
                 </CardContent>
             </Card>
