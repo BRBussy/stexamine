@@ -103,4 +103,4 @@ export default function RandomColorContext({children}: { children?: React.ReactN
     );
 }
 
-export const useRandomColorContext = () => useContext(RandomColor)
+export const useRandomColorContext = () => (useContext(RandomColor));

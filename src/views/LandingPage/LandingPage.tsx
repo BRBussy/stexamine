@@ -16,7 +16,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     root: {
         display: 'grid',
         gridTemplateColumns: 'auto',
-        gridRowGap: theme.spacing(1)
+        gridRowGap: theme.spacing(1),
+        padding: theme.spacing(1)
     },
     bodyCard: {
         backgroundColor: theme.palette.background.default
@@ -75,73 +76,71 @@ export default function LandingPage() {
                 </CardContent>
             </Card>
             {transaction &&
-            <Card>
-                <CardContent className={classes.transactionDetailsCardContent}>
-                    <Grid container spacing={2}>
-                        <Grid item>
-                            <Card className={classes.bodyCard}>
-                                <CardContent>
-                                    <DisplayField
-                                        label={'Sequence'}
-                                        value={transaction.sequence}
-                                    />
-                                    <DisplayField
-                                        label={'Source Account'}
-                                        value={transaction.source}
-                                    />
-                                    <DisplayField
-                                        label={'Network'}
-                                        value={transaction.networkPassphrase}
-                                    />
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                        <Grid item>
-                            <Card className={classes.bodyCard}>
-                                <CardHeader
-                                    title={'Time-bounds'}
-                                    titleTypographyProps={{variant: 'body1'}}
+            <React.Fragment>
+                <Grid container spacing={2}>
+                    <Grid item>
+                        <Card>
+                            <CardContent>
+                                <DisplayField
+                                    label={'Sequence'}
+                                    value={transaction.sequence}
                                 />
-                                <CardContent>
-                                    {transaction.timeBounds
-                                        ? (
-                                            <React.Fragment>
-                                                <DisplayField
-                                                    label={'Start'}
-                                                    value={moment.unix(+transaction.timeBounds.minTime).format('LLL')}
-                                                />
-                                                <DisplayField
-                                                    label={'End'}
-                                                    value={moment.unix(+transaction.timeBounds.maxTime).format('LLL')}
-                                                />
-                                            </React.Fragment>
-                                        )
-                                        : 'not set'
-                                    }
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                                <DisplayField
+                                    label={'Source Account'}
+                                    value={transaction.source}
+                                />
+                                <DisplayField
+                                    label={'Network'}
+                                    value={transaction.networkPassphrase}
+                                />
+                            </CardContent>
+                        </Card>
                     </Grid>
-                    <Card className={classes.bodyCard}>
-                        <CardHeader
-                            title={'Operations'}
-                            titleTypographyProps={{variant: 'body1'}}
-                        />
-                        <CardContent>
-                            <Grid container spacing={1}>
-                                {transaction.operations.map((op, idx) => (
-                                    <Grid item key={idx}>
-                                        <OperationCard
-                                            key={idx}
-                                            operation={op}
-                                        />
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        </CardContent>
-                    </Card>
-                </CardContent>
-            </Card>}
+                    <Grid item>
+                        <Card>
+                            <CardHeader
+                                title={'Time-bounds'}
+                                titleTypographyProps={{variant: 'body1'}}
+                            />
+                            <CardContent>
+                                {transaction.timeBounds
+                                    ? (
+                                        <React.Fragment>
+                                            <DisplayField
+                                                label={'Start'}
+                                                value={moment.unix(+transaction.timeBounds.minTime).format('LLL')}
+                                            />
+                                            <DisplayField
+                                                label={'End'}
+                                                value={moment.unix(+transaction.timeBounds.maxTime).format('LLL')}
+                                            />
+                                        </React.Fragment>
+                                    )
+                                    : 'not set'
+                                }
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
+                <Card>
+                    <CardHeader
+                        title={'Operations'}
+                        titleTypographyProps={{variant: 'body1'}}
+                    />
+                    <CardContent>
+                        <Grid container spacing={1}>
+                            {transaction.operations.map((op, idx) => (
+                                <Grid item key={idx}>
+                                    <OperationCard
+                                        key={idx}
+                                        operation={op}
+                                    />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </CardContent>
+                </Card>
+            </React.Fragment>}
         </div>
     )
 }

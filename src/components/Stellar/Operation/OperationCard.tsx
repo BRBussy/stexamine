@@ -30,7 +30,7 @@ export default function OperationCard(props: OperationCardProps) {
         case "payment":
             const paymentOperation = props.operation as Operation.Payment;
             return (
-                <Card>
+                <Card className={classes.bodyCard}>
                     <CardContent>
                         <DisplayField
                             label={'Type'}
@@ -53,7 +53,7 @@ export default function OperationCard(props: OperationCardProps) {
                         />
                         <Grid container>
                             <Grid item>
-                                <Card className={classes.bodyCard}>
+                                <Card>
                                     <CardHeader
                                         title={'Asset'}
                                         titleTypographyProps={{variant: 'caption'}}
