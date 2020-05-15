@@ -16,6 +16,14 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: 'grid',
         gridTemplateColumns: 'auto',
         gridRowGap: theme.spacing(1)
+    },
+    bodyCard: {
+        backgroundColor: theme.palette.background.default
+    },
+    transactionDetailsCardContent: {
+        display: 'grid',
+        gridTemplateColumns: 'auto',
+        gridRowGap: theme.spacing(1)
     }
 }));
 
@@ -50,7 +58,8 @@ export default function LandingPage() {
         <div className={classes.root}>
             <Card>
                 <CardHeader
-                    title={'Transaction'}
+                    title={'Input'}
+                    titleTypographyProps={{variant: 'h6'}}
                 />
                 <CardContent>
                     <TextField
@@ -64,9 +73,13 @@ export default function LandingPage() {
                     />
                 </CardContent>
             </Card>
+            {transaction &&
             <Card>
-                {transaction &&
-                <CardContent>
+                <CardHeader
+                    title={'Transaction Details'}
+                    titleTypographyProps={{variant: 'h6'}}
+                />
+                <CardContent className={classes.transactionDetailsCardContent}>
                     <Grid container spacing={2}>
                         <Grid item>
                             <DisplayField
@@ -75,7 +88,7 @@ export default function LandingPage() {
                             />
                         </Grid>
                         <Grid item>
-                            <Card>
+                            <Card className={classes.bodyCard}>
                                 <CardHeader
                                     title={'Time-bounds'}
                                     titleTypographyProps={{variant: 'body1'}}
@@ -100,8 +113,16 @@ export default function LandingPage() {
                             </Card>
                         </Grid>
                     </Grid>
-                </CardContent>}
-            </Card>
+                    <Card className={classes.bodyCard}>
+                        <CardHeader
+                            title={'Operations'}
+                            titleTypographyProps={{variant: 'body1'}}
+                        />
+                        <CardContent>
+                        </CardContent>
+                    </Card>
+                </CardContent>
+            </Card>}
         </div>
     )
 }
