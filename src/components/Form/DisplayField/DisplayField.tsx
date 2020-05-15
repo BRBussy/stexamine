@@ -1,10 +1,12 @@
 import React from 'react';
-import {Theme, Typography} from "@material-ui/core";
+import {Theme, Typography, TypographyProps} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 
 interface DisplayFieldProps {
     label: string;
     value: string;
+    labelTypographyProps?: TypographyProps;
+    valueTypographyProps?: TypographyProps;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -22,10 +24,12 @@ export default function DisplayField(props: DisplayFieldProps) {
                 color={'textSecondary'}
                 variant={'caption'}
                 children={props.label}
+                {...props.labelTypographyProps}
             />
             <Typography
                 variant={'body2'}
                 children={props.value}
+                {...props.valueTypographyProps}
             />
         </div>
     )

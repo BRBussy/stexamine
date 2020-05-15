@@ -5,6 +5,7 @@ import App from './App';
 import {CssBaseline} from '@material-ui/core';
 import * as serviceWorker from './serviceWorker';
 import ThemeContext from 'context/Theme';
+import RandomColorContext from "context/RandomColor";
 import config from 'react-global-configuration';
 
 let subdomain = 'localhost';
@@ -31,8 +32,10 @@ if (subdomain === 'localhost') {
 ReactDOM.render(
     <React.StrictMode>
         <ThemeContext>
-            <CssBaseline/>
-            <App/>
+            <RandomColorContext>
+                <CssBaseline/>
+                <App/>
+            </RandomColorContext>
         </ThemeContext>
     </React.StrictMode>,
     document.getElementById('root')

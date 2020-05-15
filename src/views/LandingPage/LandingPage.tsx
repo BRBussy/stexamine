@@ -7,9 +7,10 @@ import {
     Theme,
     TextField, Grid
 } from '@material-ui/core'
-import {xdr, Transaction, Networks, Operation, OperationType} from 'stellar-sdk';
+import {xdr, Transaction, Networks} from 'stellar-sdk';
 import {DisplayField} from 'components/Form'
 import moment from "moment";
+import {OperationCard} from 'components/Stellar/Operation'
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -142,92 +143,5 @@ export default function LandingPage() {
                 </CardContent>
             </Card>}
         </div>
-    )
-}
-
-interface OperationCardProps {
-    transactionSource?: string;
-    operation: Operation;
-}
-
-
-const useOperationCardStyles = makeStyles((theme: Theme) => ({
-    bodyCard: {
-        backgroundColor: theme.palette.background.default
-    }
-}));
-
-function OperationCard(props: OperationCardProps) {
-    const classes = useOperationCardStyles()
-
-    switch (props.operation.type) {
-        case "payment":
-            const paymentOperation = props.operation as Operation.Payment;
-            return (
-                <Card>
-                 <CardContent>
-                     <DisplayField
-                         label={'Type'}
-                         value={props.operation.type}
-                     />
-                     <DisplayField
-                         label={'Source'}
-                         value={props.operation.source
-                             ? props.operation.source
-                             : props.transactionSource
-                                 ? props.transactionSource
-                                 : 'no source'
-                         }
-                     />
-                     <DisplayField
-                         label={'Destination'}
-                         value={paymentOperation.destination}
-                     />
-                     <DisplayField
-                         label={'Amount'}
-                         value={paymentOperation.amount}
-                     />
-                     <Grid container>
-                         <Grid item>
-                             <Card className={classes.bodyCard}>
-                                 <CardHeader
-                                     title={'Asset'}
-                                     titleTypographyProps={{variant: 'caption'}}
-                                 />
-                                 <CardContent>
-                                     <DisplayField
-                                         label={'Code'}
-                                         value={paymentOperation.asset.code}
-                                     />
-                                     <DisplayField
-                                         label={'Issuer'}
-                                         value={paymentOperation.asset.issuer}
-                                     />
-                                 </CardContent>
-                             </Card>
-                         </Grid>
-                     </Grid>
-                 </CardContent>
-                </Card>
-            )
-
-    }
-
-    return (
-        <Card>
-            <DisplayField
-                label={'Type'}
-                value={props.operation.type}
-            />
-            <DisplayField
-                label={'Source'}
-                value={props.operation.source
-                    ? props.operation.source
-                    : props.transactionSource
-                        ? props.transactionSource
-                        : 'no source'
-                }
-            />
-        </Card>
     )
 }
