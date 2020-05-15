@@ -7,7 +7,7 @@ import {
     Theme,
     TextField, Grid
 } from '@material-ui/core'
-import {xdr, Transaction, Networks} from 'stellar-sdk';
+import {xdr, Transaction, Networks, Operation, OperationType} from 'stellar-sdk';
 import {DisplayField} from 'components/Form'
 import moment from "moment";
 
@@ -119,10 +119,107 @@ export default function LandingPage() {
                             titleTypographyProps={{variant: 'body1'}}
                         />
                         <CardContent>
+                            <Grid container spacing={1}>
+                                {transaction.operations.map((op, idx) => (
+                                    <Grid item key={idx}>
+                                        <OperationCard
+                                            key={idx}
+                                            operation={op}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
                         </CardContent>
                     </Card>
                 </CardContent>
             </Card>}
         </div>
+    )
+}
+
+interface OperationCardProps {
+    transactionSource?: string;
+    operation: Operation;
+}
+
+
+const useOperationCardStyles = makeStyles((theme: Theme) => ({
+    bodyCard: {
+        backgroundColor: theme.palette.background.default
+    }
+}));
+
+function OperationCard(props: OperationCardProps) {
+    const classes = useOperationCardStyles()
+
+    switch (props.operation.type) {
+        case "payment":
+            const paymentOperation = props.operation as Operation.Payment;
+            return (
+                <Card>
+                 <CardContent>
+                     <DisplayField
+                         label={'Type'}
+                         value={props.operation.type}
+                     />
+                     <DisplayField
+                         label={'Source'}
+                         value={props.operation.source
+                             ? props.operation.source
+                             : props.transactionSource
+                                 ? props.transactionSource
+                                 : 'no source'
+                         }
+                     />
+                     <DisplayField
+                         label={'Destination'}
+                         value={paymentOperation.destination}
+                     />
+                     <DisplayField
+                         label={'Amount'}
+                         value={paymentOperation.amount}
+                     />
+                     <Grid container>
+                         <Grid item>
+                             <Card className={classes.bodyCard}>
+                                 <CardHeader
+                                     title={'Asset'}
+                                     titleTypographyProps={{variant: 'caption'}}
+                                 />
+                                 <CardContent>
+                                     <DisplayField
+                                         label={'Code'}
+                                         value={paymentOperation.asset.code}
+                                     />
+                                     <DisplayField
+                                         label={'Issuer'}
+                                         value={paymentOperation.asset.issuer}
+                                     />
+                                 </CardContent>
+                             </Card>
+                         </Grid>
+                     </Grid>
+                 </CardContent>
+                </Card>
+            )
+
+    }
+
+    return (
+        <Card>
+            <DisplayField
+                label={'Type'}
+                value={props.operation.type}
+            />
+            <DisplayField
+                label={'Source'}
+                value={props.operation.source
+                    ? props.operation.source
+                    : props.transactionSource
+                        ? props.transactionSource
+                        : 'no source'
+                }
+            />
+        </Card>
     )
 }
