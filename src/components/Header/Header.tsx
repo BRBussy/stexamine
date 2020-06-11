@@ -1,8 +1,8 @@
 import React from 'react';
 import {
     makeStyles, Theme,
-    AppBar, Toolbar, useMediaQuery, useTheme, Fab, IconButton
-} from "@material-ui/core";
+    AppBar, Toolbar, useMediaQuery, useTheme, IconButton
+} from '@material-ui/core';
 import {Breakpoint} from '@material-ui/core/styles/createBreakpoints';
 import {isWidthUp} from '@material-ui/core/withWidth';
 import cx from 'classnames';
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         height: '50px',
         display: 'flex',
         boxShadow: '0 10px 20px -12px rgba(0, 0, 0, 0.42), 0 3px 20px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)',
-        padding: 0,
+        padding: 0
     },
     toolbarDesktop: {
         height: '50px',
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: 'flex'
     },
     sidebarMinimize: {
-        float: 'left',
+        float: 'left'
     },
     sidebarMiniIcon: {
         width: '20px',
@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '30px',
         verticalAlign: 'middle',
         border: '0'
-    },
+    }
 }))
 
 function useWidth() {
