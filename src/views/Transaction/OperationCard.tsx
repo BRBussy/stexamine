@@ -87,7 +87,6 @@ const usePaymentOperationCardStyles = makeStyles((theme: Theme) => ({
 function PaymentOperationCard(props: PaymentOperationCardProps) {
     const classes = usePaymentOperationCardStyles();
 
-    const destinationAccountColor = props.getRandomColorForKey(props.operation.destination)
     const assetColor = props.getRandomColorForKey(props.operation.asset.code);
     const assetIssuanceAccountColor = props.getRandomColorForKey(props.operation.asset.issuer)
 

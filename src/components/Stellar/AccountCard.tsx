@@ -1,4 +1,4 @@
-import {AccountResponse, Server} from 'stellar-sdk';
+import {AccountResponse, Server, AssetType} from 'stellar-sdk';
 import React, {useEffect, useState} from 'react';
 import {
     Card,
@@ -123,7 +123,61 @@ export default function AccountCard(props: Props) {
             />
             <Collapse in={cardOpen}>
                 <CardContent>
-                    account stuff
+                    {accountResponse.balances.map((b, idx) => {
+                        switch (b.asset_type) {
+                            case 'native':
+                                return (
+                                    <DisplayField
+                                        key={idx}
+                                        label={'XLM'}
+                                        labelTypographyProps={{
+                                            style: {
+                                                color: props.getRandomColorForKey
+                                                    ? props.getRandomColorForKey('XLM')
+                                                    : theme.palette.text.primary
+                                            }
+                                        }}
+                                        valueTypographyProps={{
+                                            style: {
+                                                color: props.getRandomColorForKey
+                                                    ? props.getRandomColorForKey('XLM')
+                                                    : theme.palette.text.primary
+                                            }
+                                        }}
+                                        value={b.balance}
+                                    />
+                                )
+
+                            default:
+                                const otherBalance = b as any as {
+                                    balance: string,
+                                    asset_code: string,
+                                    asset_issuer: string
+                                }
+                                console.log(otherBalance)
+                                return (
+                                    <DisplayField
+                                        key={idx}
+                                        label={otherBalance.asset_code}
+                                        value={otherBalance.balance}
+                                        labelTypographyProps={{
+                                            style: {
+                                                color: props.getRandomColorForKey
+                                                    ? props.getRandomColorForKey(otherBalance.asset_code)
+                                                    : theme.palette.text.primary
+                                            }
+                                        }}
+                                        valueTypographyProps={{
+                                            style: {
+                                                color: props.getRandomColorForKey
+                                                    ? props.getRandomColorForKey(otherBalance.asset_code)
+                                                    : theme.palette.text.primary
+                                            }
+                                        }}
+                                    />
+                                )
+                        }
+                    })}
                 </CardContent>
             </Collapse>
         </Card>
