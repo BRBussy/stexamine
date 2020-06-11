@@ -1,12 +1,12 @@
-import {Operation} from "stellar-sdk";
-import {Card, CardContent, CardHeader, Grid, makeStyles, Theme} from "@material-ui/core";
-import {DisplayField} from "components/Form";
-import React from "react";
-import {useRandomColorContext} from "context/RandomColor";
+import {Operation} from 'stellar-sdk';
+import {Card, CardContent, CardHeader, Grid, makeStyles, Theme} from '@material-ui/core';
+import {DisplayField} from 'components/Form';
+import React from 'react';
 
 interface OperationCardProps {
     transactionSource?: string;
     operation: Operation;
+    getRandomColorForKey: (key: string) => string;
 }
 
 
@@ -18,7 +18,6 @@ const useOperationCardStyles = makeStyles((theme: Theme) => ({
 
 export default function OperationCard(props: OperationCardProps) {
     const classes = useOperationCardStyles()
-    const {getRandomColor} = useRandomColorContext();
 
     const operationSourceAccount = props.operation.source
         ? props.operation.source
@@ -26,14 +25,14 @@ export default function OperationCard(props: OperationCardProps) {
             ? props.transactionSource
             : 'no source'
 
-    const operationSourceAccountColor = getRandomColor(operationSourceAccount);
+    const operationSourceAccountColor = props.getRandomColorForKey(operationSourceAccount);
 
     switch (props.operation.type) {
-        case "payment":
+        case 'payment':
             const paymentOperation = props.operation as Operation.Payment;
-            const destinationAccountColor = getRandomColor(paymentOperation.destination)
-            const assetColor = getRandomColor(paymentOperation.asset.code);
-            const assetIssuanceAccountColor = getRandomColor(paymentOperation.asset.issuer)
+            const destinationAccountColor = props.getRandomColorForKey(paymentOperation.destination)
+            const assetColor = props.getRandomColorForKey(paymentOperation.asset.code);
+            const assetIssuanceAccountColor = props.getRandomColorForKey(paymentOperation.asset.issuer)
 
             return (
                 <Card className={classes.bodyCard}>

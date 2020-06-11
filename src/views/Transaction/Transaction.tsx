@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {
     makeStyles,
     Card,
@@ -9,9 +9,10 @@ import {
 } from '@material-ui/core'
 import {xdr, Transaction, Networks} from 'stellar-sdk';
 import {DisplayField} from 'components/Form'
-import moment from "moment";
+import moment from 'moment';
 import OperationCard from './OperationCard';
 import cx from 'classnames';
+import {getRandomColor} from 'utilities/color';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -31,12 +32,22 @@ const useStyles = makeStyles((theme: Theme) => ({
     textArea: {
         color: theme.palette.text.primary,
         backgroundColor: theme.palette.background.paper,
-        width: 'calc(100vw - 20vw)',
+        width: 'calc(100vw - 20vw)'
     },
     textAreaError: {
         border: `2px solid ${theme.palette.error.main}`
     }
 }));
+
+const disallowedColors: string[] = [
+    '#ffffff',
+    '#000000',
+    '#424242',
+    '#303030',
+    '#7aa2c9',
+    '#354cbd',
+    '#2418b6'
+]
 
 export default function LandingPage() {
     const classes = useStyles();
@@ -44,6 +55,20 @@ export default function LandingPage() {
     const [loading, setLoading] = useState(false);
     const [parsingError, setParsingError] = useState(false);
     const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
+    const usedColors = useRef<{ [key: string]: string }>({})
+
+    const getRandomColorForKey = (key: string) => {
+        // if a color is already stored for this key, use it
+        if (usedColors.current[key]) {
+            return usedColors.current[key]
+        }
+        // otherwise get a new random color
+        usedColors.current[key] = getRandomColor([
+            ...disallowedColors,
+            ...Object.values(usedColors.current)
+        ])
+        return usedColors.current[key];
+    }
 
     useEffect(() => {
         if (!xdrString) {
@@ -53,7 +78,7 @@ export default function LandingPage() {
             setLoading(true);
             setParsingError(false);
             try {
-                const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(xdrString, "base64");
+                const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
                 setTransaction(new Transaction(transactionEnvelope, Networks.TESTNET));
             } catch (e) {
                 console.error('error parsing transaction xdr', e);
@@ -80,7 +105,7 @@ export default function LandingPage() {
                         placeholder={'Transaction base64 XDR string'}
                         className={cx(
                             classes.textArea,
-                            { [classes.textAreaError]: parsingError }
+                            {[classes.textAreaError]: parsingError}
                         )}
                         onChange={(e) => setXDRString(e.target.value)}
                     />
@@ -99,6 +124,7 @@ export default function LandingPage() {
                                 <DisplayField
                                     label={'Source Account'}
                                     value={transaction.source}
+                                    valueTypographyProps={{style: {color: getRandomColorForKey(transaction.source)}}}
                                 />
                                 <DisplayField
                                     label={'Network'}
@@ -145,6 +171,7 @@ export default function LandingPage() {
                                     <OperationCard
                                         key={idx}
                                         operation={op}
+                                        getRandomColorForKey={getRandomColorForKey}
                                     />
                                 </Grid>
                             ))}
