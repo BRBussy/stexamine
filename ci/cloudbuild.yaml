@@ -29,4 +29,4 @@ steps:
     args:
       - '-c'
       - |
-        firebase deploy --only hosting:oc-bucket --token $(cat ci/firebase-token)
+        firebase deploy --only hosting:oc-stexamine --token $(cat ci/firebase-token)

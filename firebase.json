@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "build",
-    "site": "oc-bucket",
+    "site": "stexamine",
     "ignore": [
       "firebase.json",
       "**/.*",
