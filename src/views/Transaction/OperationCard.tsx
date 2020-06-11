@@ -1,7 +1,11 @@
 import {Operation, Server, AccountResponse} from 'stellar-sdk';
-import {Card, CardContent, CardHeader, Grid, makeStyles, Theme} from '@material-ui/core';
+import {Card, CardContent, CardHeader, Collapse, Grid, IconButton, makeStyles, Theme, Tooltip} from '@material-ui/core';
 import {DisplayField} from 'components/Form';
 import React, {useEffect, useState} from 'react';
+import {
+    ExpandMore as OpenCardBodyIcon,
+    ExpandLess as CloseCardBodyIcon,
+} from '@material-ui/icons';
 
 interface OperationCardProps {
     transactionSource?: string;
@@ -71,6 +75,11 @@ interface PaymentOperationCardProps {
 const usePaymentOperationCardStyles = makeStyles((theme: Theme) => ({
     bodyCard: {
         backgroundColor: theme.palette.background.default
+    },
+    accountCardHeader: {
+        display: 'grid',
+        gridTemplateColumns: '1fr auto',
+        alignItems: 'center'
     }
 }));
 
@@ -79,6 +88,7 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
     const [loading, setLoading] = useState(false);
     const [sourceAccountResponse, setSourceAccountResponse] = useState<AccountResponse | undefined>(undefined)
     const [destinationAccount, setDestinationAccount] = useState<AccountResponse | undefined>(undefined)
+    const [sourceAccountCardOpen, setSourceAccountCardOpen] = useState(false);
 
     useEffect(() => {
         const stellarServer = new Server(props.network);
@@ -142,16 +152,34 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
                     <CardHeader
                         disableTypography
                         title={
-                            <DisplayField
-                                label={'Source Account'}
-                                value={operationSourceAccount}
-                                valueTypographyProps={{style: {color: operationSourceAccountColor}}}
-                            />
+                            <div className={classes.accountCardHeader}>
+                                <DisplayField
+                                    label={'Source Account'}
+                                    value={operationSourceAccount}
+                                    valueTypographyProps={{style: {color: operationSourceAccountColor}}}
+                                />
+                                <Tooltip
+                                    title={sourceAccountCardOpen ? 'Show Less' : 'Show More'}
+                                    placement={'top'}
+                                >
+                                    <IconButton
+                                        size={'small'}
+                                        onClick={() => setSourceAccountCardOpen(!sourceAccountCardOpen)}
+                                    >
+                                        {sourceAccountCardOpen
+                                            ? <CloseCardBodyIcon/>
+                                            : <OpenCardBodyIcon/>
+                                        }
+                                    </IconButton>
+                                </Tooltip>
+                            </div>
                         }
                     />
-                    <CardContent>
-                        account stuff
-                    </CardContent>
+                    <Collapse in={sourceAccountCardOpen}>
+                        <CardContent>
+                            account stuff
+                        </CardContent>
+                    </Collapse>
                 </Card>
 
                 <DisplayField
