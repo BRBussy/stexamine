@@ -112,6 +112,8 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
                     getRandomColorForKey={props.getRandomColorForKey}
                 />
 
+                <div style={{height: 8}}/>
+
                 {/* Operation Destination Account */}
                 <AccountCard
                     label={'Destination'}
@@ -138,12 +140,10 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
                                     value={props.operation.asset.code}
                                     valueTypographyProps={{style: {color: assetColor}}}
                                 />
-                                {/* Operation Destination Account */}
-                                <AccountCard
+                                <DisplayField
                                     label={'Issuer'}
-                                    accountID={props.operation.asset.issuer}
-                                    horizonURL={props.network}
-                                    getRandomColorForKey={props.getRandomColorForKey}
+                                    value={props.operation.asset.issuer}
+                                    valueTypographyProps={{style: {color: assetIssuanceAccountColor}}}
                                 />
                             </CardContent>
                         </Card>
