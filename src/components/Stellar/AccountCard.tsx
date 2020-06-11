@@ -56,6 +56,43 @@ export default function AccountCard(props: Props) {
         })()
     }, [props.accountID, props.horizonURL])
 
+    if (!accountResponse || loading) {
+        return (
+            <Card>
+                <CardHeader
+                    disableTypography
+                    title={
+                        <div className={classes.accountCardHeader}>
+                            <DisplayField
+                                label={props.label ? `${props.label} Account` : 'Account'}
+                                value={props.accountID}
+                                valueTypographyProps={{style: {color}}}
+                            />
+                            <Tooltip
+                                title={cardOpen ? 'Show Less' : 'Show More'}
+                                placement={'top'}
+                            >
+                                <IconButton
+                                    size={'small'}
+                                    onClick={() => setCardOpen(!cardOpen)}
+                                >
+                                    {cardOpen
+                                        ? <CloseCardBodyIcon/>
+                                        : <OpenCardBodyIcon/>
+                                    }
+                                </IconButton>
+                            </Tooltip>
+                        </div>
+                    }
+                />
+                <Collapse in={cardOpen}>
+                    <CardContent>
+                        error getting account details
+                    </CardContent>
+                </Collapse>
+            </Card>
+        )
+    }
     return (
         <Card>
             <CardHeader
