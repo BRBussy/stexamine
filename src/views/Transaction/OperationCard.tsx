@@ -1,12 +1,13 @@
-import {Operation} from 'stellar-sdk';
+import {Operation, Server, AccountResponse} from 'stellar-sdk';
 import {Card, CardContent, CardHeader, Grid, makeStyles, Theme} from '@material-ui/core';
 import {DisplayField} from 'components/Form';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 interface OperationCardProps {
     transactionSource?: string;
     operation: Operation;
     getRandomColorForKey: (key: string) => string;
+    network: string;
 }
 
 
@@ -31,6 +32,7 @@ export default function OperationCard(props: OperationCardProps) {
         case 'payment':
             return (
                 <PaymentOperationCard
+                    network={props.network}
                     transactionSource={props.transactionSource}
                     operation={props.operation as Operation.Payment}
                     getRandomColorForKey={props.getRandomColorForKey}
@@ -62,6 +64,7 @@ export default function OperationCard(props: OperationCardProps) {
 interface PaymentOperationCardProps {
     transactionSource?: string;
     operation: Operation.Payment;
+    network: string;
     getRandomColorForKey: (key: string) => string;
 }
 
@@ -73,6 +76,46 @@ const usePaymentOperationCardStyles = makeStyles((theme: Theme) => ({
 
 function PaymentOperationCard(props: PaymentOperationCardProps) {
     const classes = usePaymentOperationCardStyles();
+    const [loading, setLoading] = useState(false);
+    const [sourceAccountResponse, setSourceAccountResponse] = useState<AccountResponse | undefined>(undefined)
+    const [destinationAccount, setDestinationAccount] = useState<AccountResponse | undefined>(undefined)
+
+    useEffect(() => {
+        const stellarServer = new Server(props.network);
+        (async () => {
+            setLoading(true);
+            await Promise.all([
+                //
+                // load operation source account
+                //
+                (async () => {
+                    try {
+                        if (!props.operation.source) {
+                            return;
+                        }
+                        setSourceAccountResponse(await stellarServer.loadAccount(props.operation.source))
+                    } catch (e) {
+                        console.error(`error getting source account from stellar: ${e}`)
+                    }
+                })(),
+
+                //
+                // load operation destination account
+                //
+                (async () => {
+                    try {
+                        if (!props.operation.destination) {
+                            return;
+                        }
+                        setDestinationAccount(await stellarServer.loadAccount(props.operation.destination))
+                    } catch (e) {
+                        console.error(`error getting destination account from stellar: ${e}`)
+                    }
+                })(),
+            ])
+            setLoading(false);
+        })()
+    }, [])
 
     const destinationAccountColor = props.getRandomColorForKey(props.operation.destination)
     const assetColor = props.getRandomColorForKey(props.operation.asset.code);
@@ -93,11 +136,24 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
                     label={'Type'}
                     value={'Payment'}
                 />
-                <DisplayField
-                    label={'Source Account'}
-                    value={operationSourceAccount}
-                    valueTypographyProps={{style: {color: operationSourceAccountColor}}}
-                />
+
+                {/* Source Account */}
+                <Card>
+                    <CardHeader
+                        disableTypography
+                        title={
+                            <DisplayField
+                                label={'Source Account'}
+                                value={operationSourceAccount}
+                                valueTypographyProps={{style: {color: operationSourceAccountColor}}}
+                            />
+                        }
+                    />
+                    <CardContent>
+                        account stuff
+                    </CardContent>
+                </Card>
+
                 <DisplayField
                     label={'Destination Account'}
                     value={props.operation.destination}

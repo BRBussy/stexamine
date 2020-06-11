@@ -88,8 +88,6 @@ export default function LandingPage() {
         })()
     }, [xdrString])
 
-    console.log(transaction)
-
     return (
         <div className={classes.root}>
             <Card>
@@ -172,6 +170,7 @@ export default function LandingPage() {
                                         key={idx}
                                         operation={op}
                                         getRandomColorForKey={getRandomColorForKey}
+                                        network={'https://horizon-testnet.stellar.org'}
                                     />
                                 </Grid>
                             ))}
