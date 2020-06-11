@@ -52,7 +52,7 @@ const disallowedColors: string[] = [
 export default function LandingPage() {
     const classes = useStyles();
     const [xdrString, setXDRString] = useState('AAAAADfgrQSRzlutL3WDCb7QM9k7RdfYvYUcArUyy3VZ64TfAAABLAAD5EMAAAAVAAAAAQAAAABevduAAAAAAF7Afn8AAAAAAAAAAwAAAAEAAAAAGlj/gfWolVfZU/kXk4srlV3GChC3uuYQ1pC6D3abTzQAAAABAAAAAMnpsRnPNl5hPiuVrkhedYFEvJAQ3YmA36SO0UyyJs86AAAAAVpBUgAAAAAAkO9W/jxlIO4CicPesRrvbUhm/5O1ANrEajZDqGOC1J8AAAAAHc1lAAAAAAEAAAAAGlj/gfWolVfZU/kXk4srlV3GChC3uuYQ1pC6D3abTzQAAAABAAAAAC9NUv6pcCKw68E5kP35roXIeDrXNx8vAy+vOYz4ftsvAAAAAkRCMDREMgAAAAAAAAAAAABy51j5jb+OBXwRwTB16HcXMepK65JsYSD+fSwZnFp0ngAAAAAAmJaAAAAAAQAAAAAvTVL+qXAisOvBOZD9+a6FyHg61zcfLwMvrzmM+H7bLwAAAAEAAAAAGlj/gfWolVfZU/kXk4srlV3GChC3uuYQ1pC6D3abTzQAAAABWkFSAAAAAACQ71b+PGUg7gKJw96xGu9tSGb/k7UA2sRqNkOoY4LUnwAAAOjUpRAAAAAAAAAAAANZ64TfAAAAQPe8yaw5vuBwgMknQlSQREQ6GIGZGuHih0MLvfkiH3OgshD/CcFnkgwbS/ahHMCdSNCqXpEtkbV+JDliKEWx4gtQc27WAAAAQNc+iwe9L+4naCRjBANfMZp4BzWeTx5wbybS3H5l8DJVPnncNa0gQitcxkaPIRyeXInFuq4dDMzxqHkGqhVFYgC2a7+bAAAAQNP2NMSYbOS0Ygb3py/nPoTPJCyFml0Bhf/6qdtT9Lz+Ggbw4s6z7sZ6qLuKTDOjoEHmrf0Itghtvt2jiFTK3AE=');
-    const [loading, setLoading] = useState(false);
+    const [, setLoading] = useState(false);
     const [parsingError, setParsingError] = useState(false);
     const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
     const usedColors = useRef<{ [key: string]: string }>({})

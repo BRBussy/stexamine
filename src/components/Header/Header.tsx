@@ -91,7 +91,7 @@ export default function Header(props: HeaderProps) {
                         </IconButton>
                     </div>
                     <div className={classes.desktopViewName}>
-                        Home
+                        Stexamine
                     </div>
                 </Toolbar>
             </AppBar>
@@ -106,7 +106,7 @@ export default function Header(props: HeaderProps) {
                         <img src={logo} alt='logo' className={classes.logoMini}/>
                     </div>
                     <div>
-                        home
+                        Stexamine
                     </div>
                     <IconButton
                         size={'small'}

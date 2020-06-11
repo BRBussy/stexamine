@@ -1,4 +1,4 @@
-function randomColor() {
+function randomColor(): string {
     const letters = '0123456789ABCDEF';
     let color = '#';
     for (let i = 0; i < 6; i++) {
@@ -7,13 +7,16 @@ function randomColor() {
     return color;
 }
 
-function hexToRgb(hex: string) {
+function hexToRgb(hex: string): { r: number, g: number, b: number } {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
+    if (!result) {
+        throw new Error('unable to convert hex to rgb')
+    }
+    return {
         r: parseInt(result[1], 16),
         g: parseInt(result[2], 16),
         b: parseInt(result[3], 16)
-    } : null;
+    };
 }
 
 const threshold = 100;
@@ -50,6 +53,7 @@ export function getRandomColor(disallowedColors: string[]) {
 
     // it is similar to one of the values in the disallowed colors
     (disallowedColors.reduce(
+        // eslint-disable-next-line
         (previousValue: boolean, currentValue: string) => (previousValue ? previousValue : colorsAreClose(newColor, currentValue)),
         false
     ))

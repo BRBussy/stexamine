@@ -89,7 +89,7 @@ export default function Sidebar(props: SidebarProps) {
                     onClose={props.handleSidebarToggle}
                     ModalProps={{keepMounted: true}}
                 >
-                    some stuff
+                    sidebar
                 </Drawer>
             </Hidden>
             <Hidden smDown>
@@ -101,7 +101,7 @@ export default function Sidebar(props: SidebarProps) {
                     variant={'permanent'}
                     open
                 >
-                    some stuff
+                    sidebar
                 </Drawer>
             </Hidden>
         </div>
