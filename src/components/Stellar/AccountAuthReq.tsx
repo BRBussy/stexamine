@@ -22,7 +22,8 @@ interface Props {
 const useStyles = makeStyles((theme: Theme) => ({
     accountCardHeader: {
         display: 'grid',
-        gridTemplateColumns: '1fr auto',
+        gridTemplateColumns: 'auto auto 1fr',
+        justifyItems: 'end',
         alignItems: 'center'
     },
     detailCard: {
@@ -51,6 +52,10 @@ export default function AccAuthReqCard(props: Props) {
                                         : theme.palette.text.primary
                                 }
                             }}
+                        />
+                        <DisplayField
+                            label={'Weight'}
+                            value={props.accAuthReq.weight.toString()}
                         />
                         <Tooltip
                             title={cardOpen ? 'Show Less' : 'Show More'}
