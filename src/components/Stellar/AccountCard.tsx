@@ -232,7 +232,7 @@ export default function AccountCard(props: Props) {
                                                     size={'small'}
                                                     onClick={() => setSignatoriesOpen(!signatoriesOpen)}
                                                 >
-                                                    {balancesOpen
+                                                    {signatoriesOpen
                                                         ? <CloseCardBodyIcon/>
                                                         : <OpenCardBodyIcon/>
                                                     }

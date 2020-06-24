@@ -4,14 +4,18 @@ import React from 'react';
 export const defaultTheme = createMuiTheme({
     props: {
         MuiTextField: {
-            margin: 'dense'
+            variant: 'outlined',
+            margin: 'dense',
+            InputLabelProps: {
+                shrink: true
+            }
         }
     },
     overrides: {
         MuiCardHeader: {
             root: {
                 padding: '8px'
-            },
+            }
         },
         MuiCardContent: {
             root: {
@@ -25,7 +29,7 @@ export const defaultTheme = createMuiTheme({
     },
     palette: {
         type: 'dark'
-    },
+    }
 });
 
 export default function ThemeContext({children}: { children: React.ReactNode }) {
