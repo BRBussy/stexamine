@@ -8,21 +8,29 @@ import {
     makeStyles,
     Theme,
     Tooltip,
-    useTheme
+    useTheme,
+    Icon
 } from '@material-ui/core';
+import {
+    ErrorOutlined as NotMetIcon,
+    DoneOutlined as MetIcon
+} from '@material-ui/icons';
 import {DisplayField} from 'components/Form';
 import {ExpandLess as CloseCardBodyIcon, ExpandMore as OpenCardBodyIcon} from '@material-ui/icons';
-import {AccAuthReq} from 'utilities/stellar';
+import {AccAuthReq, authRequirementMet} from 'utilities/stellar';
+import {Transaction} from 'stellar-sdk'
 
 interface Props {
     getRandomColorForKey?: (key: string) => string;
     accAuthReq: AccAuthReq;
+    transaction: Transaction;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
     accountCardHeader: {
         display: 'grid',
-        gridTemplateColumns: 'auto auto 1fr',
+        gridTemplateColumns: 'auto auto auto 1fr',
+        gridColumnGap: theme.spacing(1),
         justifyItems: 'end',
         alignItems: 'center'
     },
@@ -34,7 +42,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function AccAuthReqCard(props: Props) {
     const classes = useStyles();
     const [cardOpen, setCardOpen] = useState(false);
+    const [potentialSignersOpen, setPotentialSignersOpen] = useState(false);
     const theme = useTheme();
+
+    const authMet = authRequirementMet(props.accAuthReq, props.transaction);
 
     return (
         <Card className={classes.detailCard}>
@@ -43,7 +54,7 @@ export default function AccAuthReqCard(props: Props) {
                 title={
                     <div className={classes.accountCardHeader}>
                         <DisplayField
-                            label={'For Account'}
+                            label={'Signature Required For Account:'}
                             value={props.accAuthReq.accountID}
                             valueTypographyProps={{
                                 style: {
@@ -54,9 +65,21 @@ export default function AccAuthReqCard(props: Props) {
                             }}
                         />
                         <DisplayField
-                            label={'Weight'}
+                            label={'Weight Required:'}
                             value={props.accAuthReq.weight.toString()}
                         />
+                        {authMet.met
+                            ? (
+                                <Icon>
+                                    <MetIcon/>
+                                </Icon>
+                            )
+                            : (
+                                <Icon>
+                                    <NotMetIcon/>
+                                </Icon>
+                            )
+                        }
                         <Tooltip
                             title={cardOpen ? 'Show Less' : 'Show More'}
                             placement={'top'}

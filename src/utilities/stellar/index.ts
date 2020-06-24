@@ -1,4 +1,4 @@
-import {Transaction, Server, AccountResponse, Keypair} from 'stellar-sdk';
+import {Transaction, Server, AccountResponse, Keypair, xdr} from 'stellar-sdk';
 
 export interface AccAuthReq {
     accountID: string;
@@ -106,6 +106,42 @@ export function signedBySigner(signer: Signer, data: Buffer, signature: Buffer):
         console.error(`error verifying signature: ${e}`);
         throw new Error();
     }
+}
+
+export function authRequirementMet(accAuthReq: AccAuthReq, txn: Transaction): {
+    met: boolean,
+    signatures: { signature: xdr.DecoratedSignature, signedBy: string }[]
+} {
+    const signatures = txn.signatures;
+    const data = txn.hash();
+
+    let outstandingSignatureWeight = accAuthReq.weight;
+    const signaturesContributing: { signature: xdr.DecoratedSignature, signedBy: string }[] = [];
+    try {
+        // for every signature on transaction...
+        for (const sig of signatures) {
+            // check every signer authorised to meet this requirement...
+            for (const authSigner of accAuthReq.signers) {
+                // if this signer is responsible for this signature...
+                if (signedBySigner(authSigner, data, sig.signature())) {
+                    // then this signature is contributing
+                    // to this authorisation requirement
+                    signaturesContributing.push({
+                        signature: sig,
+                        signedBy: authSigner.key
+                    })
+                    outstandingSignatureWeight -= authSigner.weight;
+                }
+            }
+        }
+    } catch (e) {
+        console.error(`unable to determine if auth requirement met`)
+    }
+
+    return {
+        met: outstandingSignatureWeight <= 0,
+        signatures: signaturesContributing
+    };
 }
 
 export async function signedBy(txn: Transaction, horizonURL: string) {

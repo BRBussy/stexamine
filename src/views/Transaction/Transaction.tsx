@@ -187,6 +187,7 @@ export default function LandingPage() {
                                     <AccountAuthReq
                                         accAuthReq={accAuthReq}
                                         getRandomColorForKey={getRandomColorForKey}
+                                        transaction={transaction}
                                     />
                                 </Grid>
                             ))}
