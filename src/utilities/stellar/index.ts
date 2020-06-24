@@ -1,12 +1,12 @@
 import {Transaction, Server, AccountResponse, Keypair} from 'stellar-sdk';
 
-interface AccAuthReq {
+export interface AccAuthReq {
     accountID: string;
     weight: number;
     signers: Signer[]
 }
 
-interface Signer {
+export interface Signer {
     key: string;
     type: string;
     weight: number;
@@ -118,5 +118,23 @@ export async function signedBy(txn: Transaction, horizonURL: string) {
         throw new Error()
     }
 
-    
+    const signatures = txn.signatures.map((s) => (s.signature()));
+    const data = txn.hash();
+    const sign: Signer[] = [];
+
+    try {
+        for (const sig of signatures) {
+            for (const accAuthReq of accAuthReqs) {
+                for (const authSigner of accAuthReq.signers) {
+                    if (signedBySigner(authSigner, data, sig)) {
+                        sign.push(authSigner)
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.error('unable', e);
+    }
+
+    console.log(sign)
 }

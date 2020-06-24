@@ -14,7 +14,8 @@ import OperationCard from './OperationCard';
 import cx from 'classnames';
 import {getRandomColor} from 'utilities/color';
 import {AccountCard} from 'components/Stellar';
-import {determineAccAuthReqForTxn, signedBy} from "../../utilities/stellar";
+import {AccAuthReq, determineAccAuthReqForTxn, signedBy} from '../../utilities/stellar';
+import AccountAuthReq from 'components/Stellar/AccountAuthReq';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -49,6 +50,7 @@ export default function LandingPage() {
     const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
     const usedColors = useRef<{ [key: string]: string }>({})
     const [network] = useState('https://horizon-testnet.stellar.org');
+    const [requiredAccountAuthorisations, setRequiredAccountAuthorisations] = useState<AccAuthReq[]>([])
 
     const getRandomColorForKey = (key: string) => {
         // if a color is already stored for this key, use it
@@ -73,7 +75,7 @@ export default function LandingPage() {
                 const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
                 const newTxn = new Transaction(transactionEnvelope, Networks.TESTNET);
                 setTransaction(newTxn);
-                await signedBy(newTxn, network);
+                setRequiredAccountAuthorisations(await determineAccAuthReqForTxn(newTxn, network));
             } catch (e) {
                 console.error('error parsing transaction xdr', e);
                 setParsingError(true);
@@ -175,18 +177,17 @@ export default function LandingPage() {
                 </Card>
                 <Card>
                     <CardHeader
-                        title={'Signatures'}
+                        title={'Signing'}
                         titleTypographyProps={{variant: 'body1'}}
                     />
                     <CardContent>
-                        <Grid container spacing={1} direction={'column'}>
-                            {!transaction.signatures.length &&
-                            <Grid item>
-                                No Signatures on Transaction
-                            </Grid>}
-                            {transaction.signatures.map((sig, idx) => (
+                        <Grid container direction={'column'} spacing={1}>
+                            {requiredAccountAuthorisations.map((accAuthReq, idx) => (
                                 <Grid item key={idx}>
-                                    {sig.signature()}
+                                    <AccountAuthReq
+                                        accAuthReq={accAuthReq}
+                                        getRandomColorForKey={getRandomColorForKey}
+                                    />
                                 </Grid>
                             ))}
                         </Grid>
