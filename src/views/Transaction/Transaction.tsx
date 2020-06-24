@@ -14,7 +14,7 @@ import OperationCard from './OperationCard';
 import cx from 'classnames';
 import {getRandomColor} from 'utilities/color';
 import {AccountCard} from 'components/Stellar';
-import {determineAccAuthReqForTxn} from "../../utilities/stellar";
+import {determineAccAuthReqForTxn, signedBy} from "../../utilities/stellar";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -73,8 +73,7 @@ export default function LandingPage() {
                 const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
                 const newTxn = new Transaction(transactionEnvelope, Networks.TESTNET);
                 setTransaction(newTxn);
-                const a = await determineAccAuthReqForTxn(newTxn, network);
-                console.log(a)
+                await signedBy(newTxn, network);
             } catch (e) {
                 console.error('error parsing transaction xdr', e);
                 setParsingError(true);
@@ -82,10 +81,6 @@ export default function LandingPage() {
             setLoading(false);
         })()
     }, [xdrString])
-
-    if (transaction) {
-        console.log(transaction.signatures)
-    }
 
     return (
         <div className={classes.root}>
@@ -191,7 +186,7 @@ export default function LandingPage() {
                             </Grid>}
                             {transaction.signatures.map((sig, idx) => (
                                 <Grid item key={idx}>
-                                    {sig.hint().reduce((prev, cur) => (prev + ' ' + cur.toString()), '')}
+                                    {sig.signature()}
                                 </Grid>
                             ))}
                         </Grid>

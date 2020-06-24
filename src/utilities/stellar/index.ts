@@ -1,9 +1,15 @@
-import {Transaction, Operation, Server, AccountResponse} from 'stellar-sdk';
+import {Transaction, Server, AccountResponse, Keypair} from 'stellar-sdk';
 
 interface AccAuthReq {
     accountID: string;
     weight: number;
-    signers: { key: string, type: string, weight: number }[]
+    signers: Signer[]
+}
+
+interface Signer {
+    key: string;
+    type: string;
+    weight: number;
 }
 
 export async function determineAccAuthReqForTxn(txn: Transaction, horizonURL: string): Promise<AccAuthReq[]> {
@@ -81,4 +87,36 @@ export function determineSignatureWeightOfOperationOnAccount(account: AccountRes
             return account.thresholds.high_threshold;
     }
     throw new Error('unable to determine signature weight of operation on account');
+}
+
+export function signedBySigner(signer: Signer, data: Buffer, signature: Buffer): boolean {
+    // parse key pair
+    let kp: Keypair;
+    try {
+        kp = Keypair.fromPublicKey(signer.key);
+    } catch (e) {
+        console.error(`unable to parse keypair: ${e}`);
+        throw new Error();
+    }
+
+    // perform verification
+    try {
+        return kp.verify(data, signature)
+    } catch (e) {
+        console.error(`error verifying signature: ${e}`);
+        throw new Error();
+    }
+}
+
+export async function signedBy(txn: Transaction, horizonURL: string) {
+    // get account authorisation requirements
+    let accAuthReqs: AccAuthReq[];
+    try {
+        accAuthReqs = await determineAccAuthReqForTxn(txn, horizonURL)
+    } catch (e) {
+        console.error(`unable to get authorisation requirements: ${e}`);
+        throw new Error()
+    }
+
+    
 }
