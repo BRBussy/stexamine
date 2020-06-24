@@ -38,7 +38,7 @@ export async function determineAccAuthReqForTxn(txn: Transaction, horizonURL: st
         // get the source account for operation
         let opSourceAcc: AccountResponse;
         try {
-            opSourceAcc = await stellarServer.loadAccount(txn.source);
+            opSourceAcc = await stellarServer.loadAccount(op.source);
         } catch (e) {
             console.error(`unable to retrieve operation source account: ${e}`);
             throw new Error()

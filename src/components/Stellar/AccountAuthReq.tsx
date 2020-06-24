@@ -9,7 +9,7 @@ import {
     Theme,
     Tooltip,
     useTheme,
-    Icon
+    Icon, Typography, Grid
 } from '@material-ui/core';
 import {
     ErrorOutlined as NotMetIcon,
@@ -36,6 +36,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     detailCard: {
         backgroundColor: theme.palette.background.default
+    },
+    potentialSignatoryCardHeader: {
+        display: 'grid',
+        gridTemplateColumns: '1fr auto',
+        alignItems: 'center'
     }
 }));
 
@@ -99,7 +104,60 @@ export default function AccAuthReqCard(props: Props) {
             />
             <Collapse in={cardOpen}>
                 <CardContent>
-                    asdf
+                    <Card>
+                        <CardHeader
+                            disableTypography
+                            title={
+                                <div className={classes.potentialSignatoryCardHeader}>
+                                    <Typography
+                                        children={'Potential Signatories'}
+                                        variant={'body1'}
+                                    />
+                                    <Tooltip
+                                        title={potentialSignersOpen ? 'Hide Signatories' : 'Show Signatories'}
+                                        placement={'top'}
+                                    >
+                                        <IconButton
+                                            size={'small'}
+                                            onClick={() => setPotentialSignersOpen(!potentialSignersOpen)}
+                                        >
+                                            {potentialSignersOpen
+                                                ? <CloseCardBodyIcon/>
+                                                : <OpenCardBodyIcon/>
+                                            }
+                                        </IconButton>
+                                    </Tooltip>
+                                </div>
+                            }
+                        />
+                        <Collapse in={potentialSignersOpen}>
+                            {props.accAuthReq.signers.map((s, idx) => (
+                                <CardContent key={idx}>
+                                    <Grid container spacing={1} direction={'row'}>
+                                        <Grid item>
+                                            <DisplayField
+                                                label={'Public Key'}
+                                                value={s.key}
+                                                valueTypographyProps={{
+                                                    style: {
+                                                        color: props.getRandomColorForKey
+                                                            ? props.getRandomColorForKey(s.key)
+                                                            : theme.palette.text.primary
+                                                    }
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item>
+                                            <DisplayField
+                                                label={'Weight'}
+                                                value={s.weight.toString()}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </CardContent>
+                            ))}
+                        </Collapse>
+                    </Card>
                 </CardContent>
             </Collapse>
         </Card>
