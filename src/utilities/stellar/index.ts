@@ -3,7 +3,7 @@ import {Transaction, Operation, Server, AccountResponse} from 'stellar-sdk';
 interface AccAuthReq {
     accountID: string;
     weight: number;
-    signers: { key: string, weight: number }[]
+    signers: { key: string, type: string, weight: number }[]
 }
 
 export async function determineAccAuthReqForTxn(txn: Transaction, horizonURL: string): Promise<AccAuthReq[]> {
@@ -16,10 +16,7 @@ export async function determineAccAuthReqForTxn(txn: Transaction, horizonURL: st
         requiredAuthIdx[sourceAccountResp.accountId()] = {
             accountID: sourceAccountResp.accountId(),
             weight: determineSignatureWeightOfOperationOnAccount(sourceAccountResp, 'bumpSequence'),
-            signers: sourceAccountResp.signers.map((s) => ({
-                key: getSignerKey(s),
-                weight: getSignerWeight(s)
-            }))
+            signers: sourceAccountResp.signers
         }
     } catch (e) {
         console.error(`unable to retrieve transaction source account: ${e}`);
@@ -53,10 +50,7 @@ export async function determineAccAuthReqForTxn(txn: Transaction, horizonURL: st
             requiredAuthIdx[op.source] = {
                 accountID: op.source,
                 weight: signatureWeightOfOp,
-                signers: opSourceAcc.signers.map((s) => ({
-                    key: getSignerKey(s),
-                    weight: getSignerWeight(s)
-                }))
+                signers: opSourceAcc.signers
             }
         }
     }
@@ -87,16 +81,4 @@ export function determineSignatureWeightOfOperationOnAccount(account: AccountRes
             return account.thresholds.high_threshold;
     }
     throw new Error('unable to determine signature weight of operation on account');
-}
-
-export function getSignerKey(signer: any): string {
-    switch (true) {
-        case !!signer.ed25519PublicKey:
-            return signer.ed25519PublicKey
-    }
-    return 'could not find key'
-}
-
-export function getSignerWeight(signer: any): number {
-    return signer.weight ? signer.weight : -1
 }
