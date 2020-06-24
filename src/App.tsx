@@ -7,7 +7,7 @@ import Sidebar from "components/Sidebar";
 import cx from 'classnames';
 
 const drawerWidth = 260;
-const drawerMiniWidth = 80;
+const drawerMiniWidth = 60;
 
 const useStyles = makeStyles((theme) => ({
     root: {

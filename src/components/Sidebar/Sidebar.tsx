@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
-import {Drawer, Hidden, makeStyles, Theme} from "@material-ui/core";
+import {Drawer, Hidden, makeStyles, Theme} from '@material-ui/core';
 import cx from 'classnames';
 
 const drawerWidth = 260;
-const drawerMiniWidth = 80;
+const drawerMiniWidth = 60;
 
 const useStyles = makeStyles((theme: Theme) => ({
     drawerPaper: {
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     drawerPaperMini: {
         width: drawerMiniWidth + 'px!important'
-    },
+    }
 }))
 
 interface SidebarProps {

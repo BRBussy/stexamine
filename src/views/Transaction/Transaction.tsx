@@ -13,6 +13,7 @@ import moment from 'moment';
 import OperationCard from './OperationCard';
 import cx from 'classnames';
 import {getRandomColor} from 'utilities/color';
+import {AccountCard} from 'components/Stellar';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -51,11 +52,12 @@ const disallowedColors: string[] = [
 
 export default function LandingPage() {
     const classes = useStyles();
-    const [xdrString, setXDRString] = useState('AAAAADfgrQSRzlutL3WDCb7QM9k7RdfYvYUcArUyy3VZ64TfAAABLAAD5EMAAAAVAAAAAQAAAABevduAAAAAAF7Afn8AAAAAAAAAAwAAAAEAAAAAGlj/gfWolVfZU/kXk4srlV3GChC3uuYQ1pC6D3abTzQAAAABAAAAAMnpsRnPNl5hPiuVrkhedYFEvJAQ3YmA36SO0UyyJs86AAAAAVpBUgAAAAAAkO9W/jxlIO4CicPesRrvbUhm/5O1ANrEajZDqGOC1J8AAAAAHc1lAAAAAAEAAAAAGlj/gfWolVfZU/kXk4srlV3GChC3uuYQ1pC6D3abTzQAAAABAAAAAC9NUv6pcCKw68E5kP35roXIeDrXNx8vAy+vOYz4ftsvAAAAAkRCMDREMgAAAAAAAAAAAABy51j5jb+OBXwRwTB16HcXMepK65JsYSD+fSwZnFp0ngAAAAAAmJaAAAAAAQAAAAAvTVL+qXAisOvBOZD9+a6FyHg61zcfLwMvrzmM+H7bLwAAAAEAAAAAGlj/gfWolVfZU/kXk4srlV3GChC3uuYQ1pC6D3abTzQAAAABWkFSAAAAAACQ71b+PGUg7gKJw96xGu9tSGb/k7UA2sRqNkOoY4LUnwAAAOjUpRAAAAAAAAAAAANZ64TfAAAAQPe8yaw5vuBwgMknQlSQREQ6GIGZGuHih0MLvfkiH3OgshD/CcFnkgwbS/ahHMCdSNCqXpEtkbV+JDliKEWx4gtQc27WAAAAQNc+iwe9L+4naCRjBANfMZp4BzWeTx5wbybS3H5l8DJVPnncNa0gQitcxkaPIRyeXInFuq4dDMzxqHkGqhVFYgC2a7+bAAAAQNP2NMSYbOS0Ygb3py/nPoTPJCyFml0Bhf/6qdtT9Lz+Ggbw4s6z7sZ6qLuKTDOjoEHmrf0Itghtvt2jiFTK3AE=');
+    const [xdrString, setXDRString] = useState('AAAAAKvmwKiw6/QYhmhICfO8FyYrsTbdNwZ/SdcvZptkPo0hAAAAyAANUXUAAAAJAAAAAQAAAAAAAAAAAAAAAF7zBiUAAAAAAAAAAgAAAAAAAAABAAAAAOk71E5DaXC4+bqGCsQfZnvB5PJq2T8Zw6EMgCfr6RmHAAAAAAAAAAAATEtAAAAAAQAAAADpO9ROQ2lwuPm6hgrEH2Z7weTyatk/GcOhDIAn6+kZhwAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAOUR25IGi5VBTC88q65Dk3VgH+atYBPiFXsDJS4AwN0UAAAABAAAAAAAAAAA=');
     const [, setLoading] = useState(false);
     const [parsingError, setParsingError] = useState(false);
     const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
     const usedColors = useRef<{ [key: string]: string }>({})
+    const [network] = useState('https://horizon-testnet.stellar.org');
 
     const getRandomColorForKey = (key: string) => {
         // if a color is already stored for this key, use it
@@ -119,10 +121,11 @@ export default function LandingPage() {
                                     label={'Sequence'}
                                     value={transaction.sequence}
                                 />
-                                <DisplayField
-                                    label={'Source Account'}
-                                    value={transaction.source}
-                                    valueTypographyProps={{style: {color: getRandomColorForKey(transaction.source)}}}
+                                <AccountCard
+                                    accountID={transaction.source}
+                                    horizonURL={network}
+                                    getRandomColorForKey={getRandomColorForKey}
+                                    label={'Transaction Source Account'}
                                 />
                                 <DisplayField
                                     label={'Network'}
@@ -170,7 +173,8 @@ export default function LandingPage() {
                                         key={idx}
                                         operation={op}
                                         getRandomColorForKey={getRandomColorForKey}
-                                        network={'https://horizon-testnet.stellar.org'}
+                                        network={network}
+                                        transactionSource={transaction.source}
                                     />
                                 </Grid>
                             ))}

@@ -1,12 +1,8 @@
-import {Operation, Server, AccountResponse} from 'stellar-sdk';
-import {Card, CardContent, CardHeader, Collapse, Grid, IconButton, makeStyles, Theme, Tooltip} from '@material-ui/core';
+import {Operation} from 'stellar-sdk';
+import {Card, CardContent, CardHeader, Grid, makeStyles, Theme} from '@material-ui/core';
 import {DisplayField} from 'components/Form';
-import React, {useEffect, useState} from 'react';
-import {
-    ExpandMore as OpenCardBodyIcon,
-    ExpandLess as CloseCardBodyIcon,
-} from '@material-ui/icons';
-import {AccountCard} from "../../components/Stellar";
+import React from 'react';
+import {AccountCard} from 'components/Stellar';
 
 interface OperationCardProps {
     transactionSource?: string;
@@ -44,6 +40,15 @@ export default function OperationCard(props: OperationCardProps) {
                 />
             )
 
+        case 'setOptions':
+            return (
+                <SetOptionsOperationCard
+                    network={props.network}
+                    transactionSource={props.transactionSource}
+                    operation={props.operation as Operation.SetOptions}
+                    getRandomColorForKey={props.getRandomColorForKey}
+                />
+            )
     }
 
     return (
@@ -89,6 +94,8 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
 
     const assetColor = props.getRandomColorForKey(props.operation.asset.code);
     const assetIssuanceAccountColor = props.getRandomColorForKey(props.operation.asset.issuer)
+
+    console.log('payment operation!!!!!', props)
 
     const operationSourceAccount = props.operation.source
         ? props.operation.source
@@ -149,6 +156,47 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
                         </Card>
                     </Grid>
                 </Grid>
+            </CardContent>
+        </Card>
+    )
+}
+
+
+const useSetOptionsOperationCardStyles = makeStyles((theme: Theme) => ({
+    bodyCard: {
+        backgroundColor: theme.palette.background.default
+    },
+    accountCardHeader: {
+        display: 'grid',
+        gridTemplateColumns: '1fr auto',
+        alignItems: 'center'
+    }
+}));
+
+
+interface SetOptionsOperationCardProps {
+    transactionSource?: string;
+    operation: Operation.SetOptions;
+    network: string;
+    getRandomColorForKey: (key: string) => string;
+}
+
+function SetOptionsOperationCard(props: SetOptionsOperationCardProps) {
+    const classes = useSetOptionsOperationCardStyles();
+
+    const operationSourceAccount = props.operation.source
+        ? props.operation.source
+        : props.transactionSource
+            ? props.transactionSource
+            : 'no source'
+
+    return (
+        <Card className={classes.bodyCard}>
+            <CardContent>
+                <DisplayField
+                    label={'Type'}
+                    value={'Set Options'}
+                />
             </CardContent>
         </Card>
     )
