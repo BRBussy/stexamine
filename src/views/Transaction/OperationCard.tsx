@@ -95,8 +95,6 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
     const assetColor = props.getRandomColorForKey(props.operation.asset.code);
     const assetIssuanceAccountColor = props.getRandomColorForKey(props.operation.asset.issuer)
 
-    console.log('payment operation!!!!!', props)
-
     const operationSourceAccount = props.operation.source
         ? props.operation.source
         : props.transactionSource
@@ -110,7 +108,8 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
                     label={'Type'}
                     value={'Payment'}
                 />
-
+            </CardContent>
+            <CardContent>
                 {/* Operation Source Account */}
                 <AccountCard
                     label={'Source'}
@@ -196,6 +195,15 @@ function SetOptionsOperationCard(props: SetOptionsOperationCardProps) {
                 <DisplayField
                     label={'Type'}
                     value={'Set Options'}
+                />
+            </CardContent>
+            <CardContent>
+                {/* Operation Source Account */}
+                <AccountCard
+                    label={'Source'}
+                    accountID={operationSourceAccount}
+                    horizonURL={props.network}
+                    getRandomColorForKey={props.getRandomColorForKey}
                 />
             </CardContent>
         </Card>

@@ -1,4 +1,4 @@
-import {AccountResponse, Server, AssetType} from 'stellar-sdk';
+import {AccountResponse, Server} from 'stellar-sdk';
 import React, {useEffect, useState} from 'react';
 import {
     Card,
@@ -57,8 +57,6 @@ export default function AccountCard(props: Props) {
             setLoading(false);
         })()
     }, [props.accountID, props.horizonURL])
-
-    console.log(accountResponse)
 
     if (!accountResponse || loading) {
         return (
@@ -245,9 +243,8 @@ export default function AccountCard(props: Props) {
                                 />
                                 <Collapse in={signatoriesOpen}>
                                     {accountResponse.signers.map((s, idx) => (
-                                        <CardContent>
+                                        <CardContent key={idx}>
                                             <DisplayField
-                                                key={idx}
                                                 label={'Public Key'}
                                                 labelTypographyProps={{
                                                     style: {
@@ -266,7 +263,6 @@ export default function AccountCard(props: Props) {
                                                 value={s.key}
                                             />
                                             <DisplayField
-                                                key={idx}
                                                 label={'Weight'}
                                                 labelTypographyProps={{
                                                     style: {
