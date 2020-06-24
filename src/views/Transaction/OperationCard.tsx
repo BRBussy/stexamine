@@ -1,4 +1,4 @@
-import {Operation} from 'stellar-sdk';
+import {Operation, Signer} from 'stellar-sdk';
 import {Card, CardContent, CardHeader, Grid, makeStyles, Theme} from '@material-ui/core';
 import {DisplayField} from 'components/Form';
 import React from 'react';
@@ -169,6 +169,11 @@ const useSetOptionsOperationCardStyles = makeStyles((theme: Theme) => ({
         display: 'grid',
         gridTemplateColumns: '1fr auto',
         alignItems: 'center'
+    },
+    signerLayout: {
+        display: 'grid',
+        gridTemplateColumns: 'auto',
+        gridTemplateRows: 'auto auto'
     }
 }));
 
@@ -205,7 +210,76 @@ function SetOptionsOperationCard(props: SetOptionsOperationCardProps) {
                     horizonURL={props.network}
                     getRandomColorForKey={props.getRandomColorForKey}
                 />
+
+                {props.operation.clearFlags &&
+                <DisplayField
+                    label={'Clear Flags'}
+                    value={props.operation.clearFlags.toString()}
+                />}
+
+                {props.operation.highThreshold &&
+                <DisplayField
+                    label={'Clear Flags'}
+                    value={props.operation.highThreshold.toString()}
+                />}
+
+                {props.operation.homeDomain &&
+                <DisplayField
+                    label={'Clear Flags'}
+                    value={props.operation.homeDomain.toString()}
+                />}
+
+                {props.operation.lowThreshold &&
+                <DisplayField
+                    label={'Clear Flags'}
+                    value={props.operation.lowThreshold.toString()}
+                />}
+
+                {props.operation.masterWeight &&
+                <DisplayField
+                    label={'Clear Flags'}
+                    value={props.operation.masterWeight.toString()}
+                />}
+
+                {props.operation.medThreshold &&
+                <DisplayField
+                    label={'Clear Flags'}
+                    value={props.operation.medThreshold.toString()}
+                />}
+
+                {props.operation.setFlags &&
+                <DisplayField
+                    label={'Clear Flags'}
+                    value={props.operation.setFlags.toString()}
+                />}
+
+                {props.operation.signer &&
+                <div className={classes.signerLayout}>
+                    <DisplayField
+                        label={'Signer Key'}
+                        value={getSignerKey(props.operation.signer)}
+                        valueTypographyProps={{style: {color: props.getRandomColorForKey(getSignerKey(props.operation.signer))}}}
+                    />
+                    <DisplayField
+                        label={'Signer Weight'}
+                        valueTypographyProps={{style: {color: props.getRandomColorForKey(getSignerKey(props.operation.signer))}}}
+                        value={getSignerWeight(props.operation.signer)}
+                    />
+                </div>}
+
             </CardContent>
         </Card>
     )
+}
+
+function getSignerKey(signer: any): string {
+    switch (true) {
+        case !!signer.ed25519PublicKey:
+            return signer.ed25519PublicKey
+    }
+    return 'could not find key'
+}
+
+function getSignerWeight(signer: any): string {
+    return signer.weight ? signer.weight : 'could not find weight'
 }
