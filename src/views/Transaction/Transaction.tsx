@@ -40,16 +40,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-const disallowedColors: string[] = [
-    '#ffffff',
-    '#000000',
-    '#424242',
-    '#303030',
-    '#7aa2c9',
-    '#354cbd',
-    '#2418b6'
-]
-
 export default function LandingPage() {
     const classes = useStyles();
     const [xdrString, setXDRString] = useState('AAAAAKvmwKiw6/QYhmhICfO8FyYrsTbdNwZ/SdcvZptkPo0hAAAAyAANUXUAAAAJAAAAAQAAAAAAAAAAAAAAAF7zBiUAAAAAAAAAAgAAAAAAAAABAAAAAOk71E5DaXC4+bqGCsQfZnvB5PJq2T8Zw6EMgCfr6RmHAAAAAAAAAAAATEtAAAAAAQAAAADpO9ROQ2lwuPm6hgrEH2Z7weTyatk/GcOhDIAn6+kZhwAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAOUR25IGi5VBTC88q65Dk3VgH+atYBPiFXsDJS4AwN0UAAAABAAAAAAAAAAA=');
@@ -66,7 +56,6 @@ export default function LandingPage() {
         }
         // otherwise get a new random color
         usedColors.current[key] = getRandomColor([
-            ...disallowedColors,
             ...Object.values(usedColors.current)
         ])
         return usedColors.current[key];

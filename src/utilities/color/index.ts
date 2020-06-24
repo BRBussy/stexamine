@@ -41,7 +41,21 @@ function colorsAreClose(color1: string, color2: string): boolean {
     return (rDist + gDist + bDist) < threshold
 }
 
+const globalDisallowedColors: string[] = [
+    '#ffffff',
+    '#000000',
+    '#424242',
+    '#303030',
+    '#7aa2c9',
+    '#354cbd',
+    '#2418b6'
+]
+
 export function getRandomColor(disallowedColors: string[]) {
+    disallowedColors = [
+        ...disallowedColors,
+        ...globalDisallowedColors
+    ]
 
     // generate a new random color
     let newColor = randomColor();
