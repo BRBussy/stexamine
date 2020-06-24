@@ -90,6 +90,10 @@ export default function LandingPage() {
         })()
     }, [xdrString])
 
+    if (transaction) {
+        console.log(transaction.signatures)
+    }
+
     return (
         <div className={classes.root}>
             <Card>

@@ -2,12 +2,9 @@ import React, {useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core'
 import {Router, publicRoutes} from 'route';
-import Header from "components/Header";
-import Sidebar from "components/Sidebar";
+import Header from 'components/Header';
+import Sidebar, {drawerMiniWidth, drawerWidth} from 'components/Sidebar';
 import cx from 'classnames';
-
-const drawerWidth = 260;
-const drawerMiniWidth = 60;
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -52,37 +49,37 @@ function App() {
     const [miniActive, setMiniActive] = useState(true);
 
     return (
-        <div
-            className={classes.root}
-            style={{height: window.innerHeight}}
-        >
-            <Sidebar
-                open={sideBarOpen}
-                handleSidebarToggle={() => setSidebarOpen(!sideBarOpen)}
-                miniActive={miniActive}
-            />
+        <BrowserRouter>
             <div
-                className={
-                    classes.mainPanel + ' ' +
-                    cx({
-                        [classes.mainPanelSidebarMini]: miniActive
-                    })
-                }
+                className={classes.root}
+                style={{height: window.innerHeight}}
             >
-                <Header
-                    miniActive={miniActive}
-                    sidebarMinimize={() => setMiniActive(!miniActive)}
+                <Sidebar
+                    open={sideBarOpen}
                     handleSidebarToggle={() => setSidebarOpen(!sideBarOpen)}
+                    miniActive={miniActive}
                 />
-                <div className={classes.content}>
-                    <div className={cx(classes.container, 'trailScroll')}>
-                        <BrowserRouter>
+                <div
+                    className={
+                        classes.mainPanel + ' ' +
+                        cx({
+                            [classes.mainPanelSidebarMini]: miniActive
+                        })
+                    }
+                >
+                    <Header
+                        miniActive={miniActive}
+                        sidebarMinimize={() => setMiniActive(!miniActive)}
+                        handleSidebarToggle={() => setSidebarOpen(!sideBarOpen)}
+                    />
+                    <div className={classes.content}>
+                        <div className={cx(classes.container, 'trailScroll')}>
                             <Router routes={publicRoutes}/>
-                        </BrowserRouter>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </BrowserRouter>
     );
 }
 

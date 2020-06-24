@@ -1,19 +1,22 @@
 import React, {useState} from 'react'
-import {Drawer, Hidden, makeStyles, Theme} from '@material-ui/core';
+import {Drawer, Hidden, List, ListItem, ListItemIcon, ListItemText, makeStyles, Theme} from '@material-ui/core';
 import cx from 'classnames';
+import {Route} from 'route/Route';
+import {publicRoutes} from 'route';
+import {useHistory} from 'react-router-dom';
 
-const drawerWidth = 260;
-const drawerMiniWidth = 60;
+export const drawerWidth = 260;
+export const drawerMiniWidth = 55;
 
 const useStyles = makeStyles((theme: Theme) => ({
     drawerPaper: {
+        overflow: 'hidden',
         backgroundColor: theme.palette.primary.dark,
         'border': 'none',
         'position': 'fixed',
         'top': '0',
         'bottom': '0',
         'left': '0',
-        'zIndex': 1032,
         'transitionProperty': 'top, bottom, width',
         'transitionDuration': '.2s, .2s, .35s',
         'transitionTimingFunction': 'linear, linear, ease',
@@ -33,7 +36,6 @@ const useStyles = makeStyles((theme: Theme) => ({
             height: '100vh',
             right: '0',
             left: 'auto',
-            zIndex: 1032,
             visibility: 'visible',
             overflowY: 'visible',
             borderTop: 'none',
@@ -45,7 +47,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
         '&:before,&:after': {
             position: 'absolute',
-            zIndex: 3,
             width: '100%',
             height: '100%',
             content: '""',
@@ -89,7 +90,7 @@ export default function Sidebar(props: SidebarProps) {
                     onClose={props.handleSidebarToggle}
                     ModalProps={{keepMounted: true}}
                 >
-                    sidebar
+                    <SidebarItems appRoutes={publicRoutes}/>
                 </Drawer>
             </Hidden>
             <Hidden smDown>
@@ -101,9 +102,46 @@ export default function Sidebar(props: SidebarProps) {
                     variant={'permanent'}
                     open
                 >
-                    sidebar
+                    <SidebarItems appRoutes={publicRoutes}/>
                 </Drawer>
             </Hidden>
         </div>
+    )
+}
+
+
+interface SidebarItemsProps {
+    appRoutes: Route[];
+}
+
+const useSidebarItemsStyles = makeStyles((theme: Theme) => ({
+    list: {
+        zIndex: 3000,
+        cursor: 'pointer'
+    }
+}))
+
+function SidebarItems({appRoutes}: SidebarItemsProps) {
+    const classes = useSidebarItemsStyles()
+    const history = useHistory()
+
+    return (
+        <List className={classes.list}>
+            {(appRoutes.map((route, idx) => (
+                <ListItem
+                    key={idx}
+                    onClick={() => history.push(route.path)}
+                    selected={history.location.pathname === route.path}
+                >
+                    <ListItemIcon>
+                        <route.icon/>
+                    </ListItemIcon>
+                    <ListItemText
+                        primaryTypographyProps={{noWrap: true}}
+                        primary={route.name}
+                    />
+                </ListItem>
+            )))}
+        </List>
     )
 }

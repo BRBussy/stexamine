@@ -1,9 +1,9 @@
 import React from 'react';
 
 export interface Route {
-    name?: string;
+    name: string;
     path: string;
-    icon?: React.ComponentType;
+    icon: React.ComponentType;
     component: React.ComponentType | null;
     collapse?: boolean;
     views?: {
