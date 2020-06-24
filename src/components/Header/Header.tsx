@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     makeStyles, Theme,
     AppBar, Toolbar, useMediaQuery, useTheme, IconButton
@@ -7,9 +7,12 @@ import {Breakpoint} from '@material-ui/core/styles/createBreakpoints';
 import {isWidthUp} from '@material-ui/core/withWidth';
 import cx from 'classnames';
 import {
-    Menu, MoreVert, ViewList
+    Menu, MoreVert
 } from '@material-ui/icons';
 import logo from 'assets/logo.png'
+import {publicRoutes} from '../../route';
+import {useHistory} from 'react-router-dom';
+import {act} from "react-dom/test-utils";
 
 const useStyles = makeStyles((theme: Theme) => ({
     appBar: {
@@ -72,6 +75,16 @@ interface HeaderProps {
 export default function Header(props: HeaderProps) {
     const classes = useStyles();
     const width = useWidth();
+    const [activeRouteName, setActiveRouteName] = useState('');
+    const history = useHistory();
+
+    useEffect(() => {
+        const activeAppRoute = publicRoutes.find((r) => (history.location.pathname === r.path))
+        if (!activeAppRoute) {
+            return;
+        }
+        setActiveRouteName(activeAppRoute.name);
+    }, [history, history.location.pathname])
 
     if (isWidthUp('md', width)) {
         return (
@@ -85,13 +98,13 @@ export default function Header(props: HeaderProps) {
                             onClick={props.sidebarMinimize}
                         >
                             {props.miniActive
-                                ? <ViewList/>
+                                ? <MoreVert/>
                                 : <MoreVert/>
                             }
                         </IconButton>
                     </div>
                     <div className={classes.desktopViewName}>
-                        Stexamine
+                        {activeRouteName ? `Stexamine - ${activeRouteName}` : 'Stexamine'}
                     </div>
                 </Toolbar>
             </AppBar>
@@ -106,7 +119,7 @@ export default function Header(props: HeaderProps) {
                         <img src={logo} alt='logo' className={classes.logoMini}/>
                     </div>
                     <div>
-                        Stexamine
+                        {activeRouteName ? `Stexamine - ${activeRouteName}` : 'Stexamine'}
                     </div>
                     <IconButton
                         size={'small'}

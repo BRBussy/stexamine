@@ -1,8 +1,10 @@
 import {Route} from './Route';
-import Transaction from 'views/Transaction/Transaction';
 import {
-    Money as TransactionIcon
+    Money as TransactionIcon,
+    AccountBalanceWallet as AccountIcon
 } from '@material-ui/icons';
+import Transaction from 'views/Transaction/Transaction';
+import Accounts from 'views/Accounts/Accounts';
 
 export const defaultRoute: Route = {
     name: 'Transaction',
@@ -12,5 +14,11 @@ export const defaultRoute: Route = {
 }
 
 export const publicRoutes: Route[] = [
-    defaultRoute
+    defaultRoute,
+    {
+        name: 'Account',
+        path: '/account',
+        component: Accounts,
+        icon: AccountIcon
+    }
 ]
