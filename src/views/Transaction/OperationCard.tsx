@@ -1,4 +1,4 @@
-import {Operation, Signer} from 'stellar-sdk';
+import {Operation} from 'stellar-sdk';
 import {Card, CardContent, CardHeader, Grid, makeStyles, Theme} from '@material-ui/core';
 import {DisplayField} from 'components/Form';
 import React from 'react';

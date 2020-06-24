@@ -14,6 +14,7 @@ import OperationCard from './OperationCard';
 import cx from 'classnames';
 import {getRandomColor} from 'utilities/color';
 import {AccountCard} from 'components/Stellar';
+import {determineAccAuthReqForTxn} from "../../utilities/stellar";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function LandingPage() {
     const classes = useStyles();
-    const [xdrString, setXDRString] = useState('AAAAAKvmwKiw6/QYhmhICfO8FyYrsTbdNwZ/SdcvZptkPo0hAAAAyAANUXUAAAAJAAAAAQAAAAAAAAAAAAAAAF7zBiUAAAAAAAAAAgAAAAAAAAABAAAAAOk71E5DaXC4+bqGCsQfZnvB5PJq2T8Zw6EMgCfr6RmHAAAAAAAAAAAATEtAAAAAAQAAAADpO9ROQ2lwuPm6hgrEH2Z7weTyatk/GcOhDIAn6+kZhwAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAOUR25IGi5VBTC88q65Dk3VgH+atYBPiFXsDJS4AwN0UAAAABAAAAAAAAAAA=');
+    const [xdrString, setXDRString] = useState('AAAAAKvmwKiw6/QYhmhICfO8FyYrsTbdNwZ/SdcvZptkPo0hAAAAyAANUXUAAAAPAAAAAQAAAAAAAAAAAAAAAF7zP6sAAAAAAAAAAgAAAAAAAAABAAAAAMujTV9OQmldNWpM9ou2BfYg9dqpAHSZxLmovo0P2g7tAAAAAAAAAAAATEtAAAAAAQAAAADLo01fTkJpXTVqTPaLtgX2IPXaqQB0mcS5qL6ND9oO7QAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAOUR25IGi5VBTC88q65Dk3VgH+atYBPiFXsDJS4AwN0UAAAABAAAAAAAAAAJkPo0hAAAAQLeVgLQidEjC32v2XYExUHcxisXxqSfBuhzyABO8F+zoLDnsFMyo6PSIznBPCK5uKHARp6A5a2AYgh4sfUuFSAQP2g7tAAAAQHS5b8AxKOPcAdsu0olE1jNFihFuvGf8hvodA/nNF/pNCBREoG3Jb+aS27d1btmLlfXKCvUGTlt1mW/o+oZU9Ag=');
     const [, setLoading] = useState(false);
     const [parsingError, setParsingError] = useState(false);
     const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
@@ -70,7 +71,10 @@ export default function LandingPage() {
             setParsingError(false);
             try {
                 const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
-                setTransaction(new Transaction(transactionEnvelope, Networks.TESTNET));
+                const newTxn = new Transaction(transactionEnvelope, Networks.TESTNET);
+                setTransaction(newTxn);
+                const a = await determineAccAuthReqForTxn(newTxn, network);
+                console.log(a)
             } catch (e) {
                 console.error('error parsing transaction xdr', e);
                 setParsingError(true);
@@ -88,7 +92,7 @@ export default function LandingPage() {
             <Card>
                 <CardHeader
                     title={'Input'}
-                    titleTypographyProps={{variant: 'h6'}}
+                    titleTypographyProps={{variant: 'body1'}}
                 />
                 <CardContent>
                     <TextareaAutosize
@@ -169,6 +173,25 @@ export default function LandingPage() {
                                         network={network}
                                         transactionSource={transaction.source}
                                     />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader
+                        title={'Signatures'}
+                        titleTypographyProps={{variant: 'body1'}}
+                    />
+                    <CardContent>
+                        <Grid container spacing={1} direction={'column'}>
+                            {!transaction.signatures.length &&
+                            <Grid item>
+                                No Signatures on Transaction
+                            </Grid>}
+                            {transaction.signatures.map((sig, idx) => (
+                                <Grid item key={idx}>
+                                    {sig.hint().reduce((prev, cur) => (prev + ' ' + cur.toString()), '')}
                                 </Grid>
                             ))}
                         </Grid>
