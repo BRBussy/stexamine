@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 function App() {
     const classes = useStyles();
     const [sideBarOpen, setSidebarOpen] = useState(false);
-    const [miniActive, setMiniActive] = useState(false);
+    const [miniActive, setMiniActive] = useState(true);
 
     return (
         <div
@@ -65,12 +65,12 @@ function App() {
                 className={
                     classes.mainPanel + ' ' +
                     cx({
-                        [classes.mainPanelSidebarMini]: miniActive,
+                        [classes.mainPanelSidebarMini]: miniActive
                     })
                 }
             >
                 <Header
-                    miniActive={false}
+                    miniActive={miniActive}
                     sidebarMinimize={() => setMiniActive(!miniActive)}
                     handleSidebarToggle={() => setSidebarOpen(!sideBarOpen)}
                 />
