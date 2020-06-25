@@ -60,43 +60,6 @@ export default function AccountCard(props: Props) {
         })()
     }, [props.accountID, props.horizonURL])
 
-    if (!accountResponse || loading) {
-        return (
-            <Card>
-                <CardHeader
-                    disableTypography
-                    title={
-                        <div className={classes.accountCardHeader}>
-                            <DisplayField
-                                label={props.label ? `${props.label} Account` : 'Account'}
-                                value={props.accountID}
-                                valueTypographyProps={{style: {color}}}
-                            />
-                            <Tooltip
-                                title={cardOpen ? 'Show Less' : 'Show More'}
-                                placement={'top'}
-                            >
-                                <IconButton
-                                    size={'small'}
-                                    onClick={() => setCardOpen(!cardOpen)}
-                                >
-                                    {cardOpen
-                                        ? <CloseCardBodyIcon/>
-                                        : <OpenCardBodyIcon/>
-                                    }
-                                </IconButton>
-                            </Tooltip>
-                        </div>
-                    }
-                />
-                <Collapse in={cardOpen}>
-                    <CardContent>
-                        error getting account details
-                    </CardContent>
-                </Collapse>
-            </Card>
-        )
-    }
     return (
         <Card className={cx({[classes.detailCard]: !!props.invertColors})}>
             <CardHeader
@@ -127,167 +90,183 @@ export default function AccountCard(props: Props) {
             />
             <Collapse in={cardOpen}>
                 <CardContent>
-                    <Grid container spacing={1} direction={'column'}>
-                        {/* Balances */}
-                        <Grid item>
-                            <Card className={cx({[classes.detailCard]: !props.invertColors})}>
-                                <CardHeader
-                                    disableTypography
-                                    title={
-                                        <div className={classes.accountCardHeader}>
-                                            <Typography
-                                                children={'Balances'}
+                    {(() => {
+                        if (loading) {
+                            return (
+                                <div>loading...</div>
+                            )
+                        }
+
+                        if (accountResponse) {
+                            return (
+                                <Grid container spacing={1} direction={'column'}>
+                                    {/* Balances */}
+                                    <Grid item>
+                                        <Card className={cx({[classes.detailCard]: !props.invertColors})}>
+                                            <CardHeader
+                                                disableTypography
+                                                title={
+                                                    <div className={classes.accountCardHeader}>
+                                                        <Typography
+                                                            children={'Balances'}
+                                                        />
+                                                        <Tooltip
+                                                            title={balancesOpen ? 'Hide Balances' : 'Show Balances'}
+                                                            placement={'top'}
+                                                        >
+                                                            <IconButton
+                                                                size={'small'}
+                                                                onClick={() => setBalancesOpen(!balancesOpen)}
+                                                            >
+                                                                {balancesOpen
+                                                                    ? <CloseCardBodyIcon/>
+                                                                    : <OpenCardBodyIcon/>
+                                                                }
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </div>
+                                                }
                                             />
-                                            <Tooltip
-                                                title={balancesOpen ? 'Hide Balances' : 'Show Balances'}
-                                                placement={'top'}
-                                            >
-                                                <IconButton
-                                                    size={'small'}
-                                                    onClick={() => setBalancesOpen(!balancesOpen)}
-                                                >
-                                                    {balancesOpen
-                                                        ? <CloseCardBodyIcon/>
-                                                        : <OpenCardBodyIcon/>
-                                                    }
-                                                </IconButton>
-                                            </Tooltip>
-                                        </div>
-                                    }
-                                />
-                                <Collapse in={balancesOpen}>
-                                    <CardContent>
-                                        {accountResponse.balances.map((b, idx) => {
-                                            switch (b.asset_type) {
-                                                case 'native':
-                                                    return (
+                                            <Collapse in={balancesOpen}>
+                                                <CardContent>
+                                                    {accountResponse.balances.map((b, idx) => {
+                                                        switch (b.asset_type) {
+                                                            case 'native':
+                                                                return (
+                                                                    <DisplayField
+                                                                        key={idx}
+                                                                        label={'XLM'}
+                                                                        labelTypographyProps={{
+                                                                            style: {
+                                                                                color: props.getRandomColorForKey
+                                                                                    ? props.getRandomColorForKey('XLM')
+                                                                                    : theme.palette.text.primary
+                                                                            }
+                                                                        }}
+                                                                        valueTypographyProps={{
+                                                                            style: {
+                                                                                color: props.getRandomColorForKey
+                                                                                    ? props.getRandomColorForKey('XLM')
+                                                                                    : theme.palette.text.primary
+                                                                            }
+                                                                        }}
+                                                                        value={b.balance}
+                                                                    />
+                                                                )
+
+                                                            default:
+                                                                const otherBalance = b as any as {
+                                                                    balance: string,
+                                                                    asset_code: string,
+                                                                    asset_issuer: string
+                                                                }
+                                                                return (
+                                                                    <DisplayField
+                                                                        key={idx}
+                                                                        label={otherBalance.asset_code}
+                                                                        value={otherBalance.balance}
+                                                                        labelTypographyProps={{
+                                                                            style: {
+                                                                                color: props.getRandomColorForKey
+                                                                                    ? props.getRandomColorForKey(otherBalance.asset_code)
+                                                                                    : theme.palette.text.primary
+                                                                            }
+                                                                        }}
+                                                                        valueTypographyProps={{
+                                                                            style: {
+                                                                                color: props.getRandomColorForKey
+                                                                                    ? props.getRandomColorForKey(otherBalance.asset_code)
+                                                                                    : theme.palette.text.primary
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                )
+                                                        }
+                                                    })}
+                                                </CardContent>
+                                            </Collapse>
+                                        </Card>
+                                    </Grid>
+
+                                    {/* Signatories */}
+                                    <Grid item>
+                                        <Card className={cx({[classes.detailCard]: !props.invertColors})}>
+                                            <CardHeader
+                                                disableTypography
+                                                title={
+                                                    <div className={classes.accountCardHeader}>
+                                                        <Typography
+                                                            children={'Signatories'}
+                                                        />
+                                                        <Tooltip
+                                                            title={signatoriesOpen ? 'Hide Signatories' : 'Show Signatories'}
+                                                            placement={'top'}
+                                                        >
+                                                            <IconButton
+                                                                size={'small'}
+                                                                onClick={() => setSignatoriesOpen(!signatoriesOpen)}
+                                                            >
+                                                                {signatoriesOpen
+                                                                    ? <CloseCardBodyIcon/>
+                                                                    : <OpenCardBodyIcon/>
+                                                                }
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </div>
+                                                }
+                                            />
+                                            <Collapse in={signatoriesOpen}>
+                                                {accountResponse.signers.map((s, idx) => (
+                                                    <CardContent key={idx}>
                                                         <DisplayField
-                                                            key={idx}
-                                                            label={'XLM'}
+                                                            label={'Public Key'}
                                                             labelTypographyProps={{
                                                                 style: {
                                                                     color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey('XLM')
+                                                                        ? props.getRandomColorForKey(s.key)
                                                                         : theme.palette.text.primary
                                                                 }
                                                             }}
                                                             valueTypographyProps={{
                                                                 style: {
                                                                     color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey('XLM')
+                                                                        ? props.getRandomColorForKey(s.key)
                                                                         : theme.palette.text.primary
                                                                 }
                                                             }}
-                                                            value={b.balance}
+                                                            value={s.key}
                                                         />
-                                                    )
-
-                                                default:
-                                                    const otherBalance = b as any as {
-                                                        balance: string,
-                                                        asset_code: string,
-                                                        asset_issuer: string
-                                                    }
-                                                    return (
                                                         <DisplayField
-                                                            key={idx}
-                                                            label={otherBalance.asset_code}
-                                                            value={otherBalance.balance}
+                                                            label={'Weight'}
                                                             labelTypographyProps={{
                                                                 style: {
                                                                     color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey(otherBalance.asset_code)
+                                                                        ? props.getRandomColorForKey(s.key)
                                                                         : theme.palette.text.primary
                                                                 }
                                                             }}
                                                             valueTypographyProps={{
                                                                 style: {
                                                                     color: props.getRandomColorForKey
-                                                                        ? props.getRandomColorForKey(otherBalance.asset_code)
+                                                                        ? props.getRandomColorForKey(s.key)
                                                                         : theme.palette.text.primary
                                                                 }
                                                             }}
+                                                            value={s.weight.toString()}
                                                         />
-                                                    )
-                                            }
-                                        })}
-                                    </CardContent>
-                                </Collapse>
-                            </Card>
-                        </Grid>
+                                                    </CardContent>
+                                                ))}
+                                            </Collapse>
+                                        </Card>
+                                    </Grid>
+                                </Grid>
+                            )
+                        }
 
-                        {/* Signatories */}
-                        <Grid item>
-                            <Card className={cx({[classes.detailCard]: !props.invertColors})}>
-                                <CardHeader
-                                    disableTypography
-                                    title={
-                                        <div className={classes.accountCardHeader}>
-                                            <Typography
-                                                children={'Signatories'}
-                                            />
-                                            <Tooltip
-                                                title={signatoriesOpen ? 'Hide Signatories' : 'Show Signatories'}
-                                                placement={'top'}
-                                            >
-                                                <IconButton
-                                                    size={'small'}
-                                                    onClick={() => setSignatoriesOpen(!signatoriesOpen)}
-                                                >
-                                                    {signatoriesOpen
-                                                        ? <CloseCardBodyIcon/>
-                                                        : <OpenCardBodyIcon/>
-                                                    }
-                                                </IconButton>
-                                            </Tooltip>
-                                        </div>
-                                    }
-                                />
-                                <Collapse in={signatoriesOpen}>
-                                    {accountResponse.signers.map((s, idx) => (
-                                        <CardContent key={idx}>
-                                            <DisplayField
-                                                label={'Public Key'}
-                                                labelTypographyProps={{
-                                                    style: {
-                                                        color: props.getRandomColorForKey
-                                                            ? props.getRandomColorForKey(s.key)
-                                                            : theme.palette.text.primary
-                                                    }
-                                                }}
-                                                valueTypographyProps={{
-                                                    style: {
-                                                        color: props.getRandomColorForKey
-                                                            ? props.getRandomColorForKey(s.key)
-                                                            : theme.palette.text.primary
-                                                    }
-                                                }}
-                                                value={s.key}
-                                            />
-                                            <DisplayField
-                                                label={'Weight'}
-                                                labelTypographyProps={{
-                                                    style: {
-                                                        color: props.getRandomColorForKey
-                                                            ? props.getRandomColorForKey(s.key)
-                                                            : theme.palette.text.primary
-                                                    }
-                                                }}
-                                                valueTypographyProps={{
-                                                    style: {
-                                                        color: props.getRandomColorForKey
-                                                            ? props.getRandomColorForKey(s.key)
-                                                            : theme.palette.text.primary
-                                                    }
-                                                }}
-                                                value={s.weight.toString()}
-                                            />
-                                        </CardContent>
-                                    ))}
-                                </Collapse>
-                            </Card>
-                        </Grid>
-                    </Grid>
+                        return (
+                            <div>error</div>
+                        )
+                    })()}
                 </CardContent>
             </Collapse>
         </Card>
