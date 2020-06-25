@@ -119,7 +119,8 @@ export default function LandingPage() {
                                     accountID={transaction.source}
                                     horizonURL={network}
                                     getRandomColorForKey={getRandomColorForKey}
-                                    label={'Transaction Source Account'}
+                                    label={'Transaction Source'}
+                                    invertColors
                                 />
                                 <DisplayField
                                     label={'Network'}

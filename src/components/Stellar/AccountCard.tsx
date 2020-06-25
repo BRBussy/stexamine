@@ -13,12 +13,14 @@ import {
 } from '@material-ui/core';
 import {DisplayField} from 'components/Form';
 import {ExpandLess as CloseCardBodyIcon, ExpandMore as OpenCardBodyIcon} from '@material-ui/icons';
+import cx from 'classnames';
 
 interface Props {
     accountID: string;
     horizonURL: string;
     getRandomColorForKey?: (key: string) => string;
     label?: string;
+    invertColors?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -96,7 +98,7 @@ export default function AccountCard(props: Props) {
         )
     }
     return (
-        <Card>
+        <Card className={cx({[classes.detailCard]: !!props.invertColors})}>
             <CardHeader
                 disableTypography
                 title={
@@ -128,7 +130,7 @@ export default function AccountCard(props: Props) {
                     <Grid container spacing={1} direction={'column'}>
                         {/* Balances */}
                         <Grid item>
-                            <Card className={classes.detailCard}>
+                            <Card className={cx({[classes.detailCard]: !props.invertColors})}>
                                 <CardHeader
                                     disableTypography
                                     title={
@@ -216,7 +218,7 @@ export default function AccountCard(props: Props) {
 
                         {/* Signatories */}
                         <Grid item>
-                            <Card className={classes.detailCard}>
+                            <Card className={cx({[classes.detailCard]: !props.invertColors})}>
                                 <CardHeader
                                     disableTypography
                                     title={
