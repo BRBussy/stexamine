@@ -19,7 +19,7 @@ function hexToRgb(hex: string): { r: number, g: number, b: number } {
     };
 }
 
-const threshold = 150;
+const threshold = 110;
 
 function colorsAreClose(color1: string, color2: string): boolean {
     const color1RGB = hexToRgb(color1);
@@ -48,7 +48,8 @@ const globalDisallowedColors: string[] = [
     '#303030',
     '#7aa2c9',
     '#354cbd',
-    '#2418b6'
+    '#2418b6',
+    '#25544c'
 ]
 
 export function getRandomColor(disallowedColors: string[]) {
@@ -59,6 +60,8 @@ export function getRandomColor(disallowedColors: string[]) {
 
     // generate a new random color
     let newColor = randomColor();
+
+    let whileCount = 0;
 
     // while this newColor is
     while (
@@ -72,6 +75,12 @@ export function getRandomColor(disallowedColors: string[]) {
         false
     ))
         ) {
+        whileCount++;
+        if (whileCount > 500) {
+            console.log('could not find different enough color')
+            return newColor;
+        }
+
         // generate another one
         newColor = randomColor();
     }
