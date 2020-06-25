@@ -132,6 +132,11 @@ export default function AccAuthReqCard(props: Props) {
                 }
             />
             <Collapse in={cardOpen}>
+                <CardContent>
+                    <Typography
+                        children={'Potential Signatories:'}
+                    />
+                </CardContent>
                 <React.Fragment>
                     {props.accAuthReq.signers.map((s, idx) => {
                         const signatureByThisSigner = authMetResult.signatures.find((sig) => (sig.signedBy === s.key));
