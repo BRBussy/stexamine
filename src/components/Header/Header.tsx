@@ -10,9 +10,8 @@ import {
     Menu, MoreVert
 } from '@material-ui/icons';
 import logo from 'assets/logo.png'
-import {publicRoutes} from '../../route';
+import {publicRoutes} from 'route';
 import {useHistory} from 'react-router-dom';
-import {act} from "react-dom/test-utils";
 
 const useStyles = makeStyles((theme: Theme) => ({
     appBar: {

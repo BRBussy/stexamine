@@ -1,8 +1,7 @@
 import React, {useRef, useState} from 'react';
 import {getRandomColor} from 'utilities/color';
-import {Card, CardContent, CardHeader, makeStyles, TextareaAutosize, TextField, Theme} from '@material-ui/core';
-import cx from 'classnames';
-import {AccountCard} from "../../components/Stellar";
+import {Card, CardContent, makeStyles, TextField, Theme} from '@material-ui/core';
+import {AccountCard} from 'components/Stellar';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {

@@ -14,7 +14,7 @@ import OperationCard from './OperationCard';
 import cx from 'classnames';
 import {getRandomColor} from 'utilities/color';
 import {AccountCard} from 'components/Stellar';
-import {AccAuthReq, determineAccAuthReqForTxn, signedBy} from '../../utilities/stellar';
+import {AccAuthReq, determineAccAuthReqForTxn} from 'utilities/stellar';
 import AccountAuthReq from 'components/Stellar/AccountAuthReq';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -82,7 +82,7 @@ export default function LandingPage() {
             }
             setLoading(false);
         })()
-    }, [xdrString])
+    }, [xdrString, network])
 
     return (
         <div className={classes.root}>

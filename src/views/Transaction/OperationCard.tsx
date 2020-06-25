@@ -11,24 +11,7 @@ interface OperationCardProps {
     network: string;
 }
 
-
-const useOperationCardStyles = makeStyles((theme: Theme) => ({
-    bodyCard: {
-        backgroundColor: theme.palette.background.default
-    }
-}));
-
 export default function OperationCard(props: OperationCardProps) {
-    const classes = useOperationCardStyles()
-
-    const operationSourceAccount = props.operation.source
-        ? props.operation.source
-        : props.transactionSource
-            ? props.transactionSource
-            : 'no source'
-
-    const operationSourceAccountColor = props.getRandomColorForKey(operationSourceAccount);
-
     switch (props.operation.type) {
         case 'payment':
             return (
