@@ -147,7 +147,7 @@ export function authRequirementMet(accAuthReq: AccAuthReq, txn: Transaction): Au
     }
 
     return {
-        met: outstandingSignatureWeight <= 0,
+        met: outstandingSignatureWeight <= 0 && !!signaturesContributing.length,
         signatures: signaturesContributing
     };
 }

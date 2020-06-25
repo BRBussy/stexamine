@@ -109,7 +109,7 @@ export default function AccAuthReqCard(props: Props) {
                                     </Icon>
                                     <Typography
                                         children={'Not Met'}
-                                        className={classes.success}
+                                        className={classes.error}
                                     />
                                 </div>
                             )
