@@ -19,7 +19,7 @@ function hexToRgb(hex: string): { r: number, g: number, b: number } {
     };
 }
 
-const threshold = 200;
+const threshold = 150;
 
 function colorsAreClose(color1: string, color2: string): boolean {
     const color1RGB = hexToRgb(color1);
