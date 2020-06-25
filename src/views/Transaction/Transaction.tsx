@@ -178,7 +178,7 @@ export default function LandingPage() {
                 </Card>
                 <Card>
                     <CardHeader
-                        title={'Signing'}
+                        title={'Signature Details'}
                         titleTypographyProps={{variant: 'body1'}}
                     />
                     <CardContent>

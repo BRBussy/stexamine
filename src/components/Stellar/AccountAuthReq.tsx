@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import {
     Card,
     CardContent,
@@ -17,7 +17,7 @@ import {
 } from '@material-ui/icons';
 import {DisplayField} from 'components/Form';
 import {ExpandLess as CloseCardBodyIcon, ExpandMore as OpenCardBodyIcon} from '@material-ui/icons';
-import {AccAuthReq, authRequirementMet} from 'utilities/stellar';
+import {AccAuthReq, AuthMetResult, authRequirementMet} from 'utilities/stellar';
 import {Transaction} from 'stellar-sdk'
 
 interface Props {
@@ -59,10 +59,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function AccAuthReqCard(props: Props) {
     const classes = useStyles();
     const [cardOpen, setCardOpen] = useState(false);
-    const [potentialSignersOpen, setPotentialSignersOpen] = useState(false);
+    const [authMetResult, setAuthMetResult] = useState<AuthMetResult>({
+        met: false,
+        signatures: []
+    });
     const theme = useTheme();
 
-    const authMet = authRequirementMet(props.accAuthReq, props.transaction);
+    useLayoutEffect(() => {
+        setAuthMetResult(authRequirementMet(props.accAuthReq, props.transaction));
+    }, [props.accAuthReq, props.transaction])
 
     return (
         <Card className={classes.detailCard}>
@@ -71,7 +76,7 @@ export default function AccAuthReqCard(props: Props) {
                 title={
                     <div className={classes.accountCardHeader}>
                         <DisplayField
-                            label={'Signature Required For Account:'}
+                            label={'Signatures are required for the account with Key:'}
                             value={props.accAuthReq.accountID}
                             valueTypographyProps={{
                                 style: {
@@ -82,17 +87,17 @@ export default function AccAuthReqCard(props: Props) {
                             }}
                         />
                         <DisplayField
-                            label={'Weight Required:'}
+                            label={'They must have a cumulative weight of:'}
                             value={props.accAuthReq.weight.toString()}
                         />
-                        {authMet.met
+                        {authMetResult.met
                             ? (
                                 <div className={classes.authMetResultLayout}>
                                     <Icon className={classes.success}>
                                         <MetIcon/>
                                     </Icon>
                                     <Typography
-                                        children={'Met'}
+                                        children={'Requirement Met'}
                                         className={classes.success}
                                     />
                                 </div>
@@ -127,62 +132,49 @@ export default function AccAuthReqCard(props: Props) {
                 }
             />
             <Collapse in={cardOpen}>
-                <CardContent>
-                    <Card>
-                        <CardHeader
-                            disableTypography
-                            title={
-                                <div className={classes.potentialSignatoryCardHeader}>
-                                    <Typography
-                                        children={'Potential Signatories'}
-                                        variant={'body1'}
-                                    />
-                                    <Tooltip
-                                        title={potentialSignersOpen ? 'Hide Signatories' : 'Show Signatories'}
-                                        placement={'top'}
-                                    >
-                                        <IconButton
-                                            size={'small'}
-                                            onClick={() => setPotentialSignersOpen(!potentialSignersOpen)}
-                                        >
-                                            {potentialSignersOpen
-                                                ? <CloseCardBodyIcon/>
-                                                : <OpenCardBodyIcon/>
-                                            }
-                                        </IconButton>
-                                    </Tooltip>
-                                </div>
-                            }
-                        />
-                        <Collapse in={potentialSignersOpen}>
-                            {props.accAuthReq.signers.map((s, idx) => (
-                                <CardContent key={idx}>
-                                    <Grid container spacing={1} direction={'row'}>
-                                        <Grid item>
-                                            <DisplayField
-                                                label={'Public Key'}
-                                                value={s.key}
-                                                valueTypographyProps={{
-                                                    style: {
-                                                        color: props.getRandomColorForKey
-                                                            ? props.getRandomColorForKey(s.key)
-                                                            : theme.palette.text.primary
-                                                    }
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid item>
-                                            <DisplayField
-                                                label={'Weight'}
-                                                value={s.weight.toString()}
-                                            />
-                                        </Grid>
+                <React.Fragment>
+                    {props.accAuthReq.signers.map((s, idx) => {
+                        const signatureByThisSigner = authMetResult.signatures.find((sig) => (sig.signedBy === s.key));
+
+                        return (
+                            <CardContent key={idx}>
+                                <Grid container spacing={1} direction={'row'} alignItems={'center'}>
+                                    <Grid item>
+                                        <DisplayField
+                                            label={'Public Key'}
+                                            value={s.key}
+                                            valueTypographyProps={{
+                                                style: {
+                                                    color: props.getRandomColorForKey
+                                                        ? props.getRandomColorForKey(s.key)
+                                                        : theme.palette.text.primary
+                                                }
+                                            }}
+                                        />
                                     </Grid>
-                                </CardContent>
-                            ))}
-                        </Collapse>
-                    </Card>
-                </CardContent>
+                                    <Grid item>
+                                        <DisplayField
+                                            label={'Weight'}
+                                            value={s.weight.toString()}
+                                        />
+                                    </Grid>
+                                    {!!signatureByThisSigner &&
+                                    <Grid item>
+                                        <div className={classes.authMetResultLayout}>
+                                            <Icon className={classes.success}>
+                                                <MetIcon/>
+                                            </Icon>
+                                            <Typography
+                                                children={'Contributed Signature'}
+                                                className={classes.success}
+                                            />
+                                        </div>
+                                    </Grid>}
+                                </Grid>
+                            </CardContent>
+                        )
+                    })}
+                </React.Fragment>
             </Collapse>
         </Card>
     )

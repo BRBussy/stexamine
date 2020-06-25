@@ -108,10 +108,18 @@ export function signedBySigner(signer: Signer, data: Buffer, signature: Buffer):
     }
 }
 
-export function authRequirementMet(accAuthReq: AccAuthReq, txn: Transaction): {
-    met: boolean,
-    signatures: { signature: xdr.DecoratedSignature, signedBy: string }[]
-} {
+export interface AuthMetResult {
+    met: boolean;
+    signatures: { signature: xdr.DecoratedSignature, signedBy: string }[];
+}
+
+/**
+ * Given an account authorisation requirement and a transaction
+ * determines if the given requirement is met
+ * @param {AccAuthReq} accAuthReq
+ * @param {Transaction} txn
+ */
+export function authRequirementMet(accAuthReq: AccAuthReq, txn: Transaction): AuthMetResult {
     const signatures = txn.signatures;
     const data = txn.hash();
 
@@ -142,35 +150,4 @@ export function authRequirementMet(accAuthReq: AccAuthReq, txn: Transaction): {
         met: outstandingSignatureWeight <= 0,
         signatures: signaturesContributing
     };
-}
-
-export async function signedBy(txn: Transaction, horizonURL: string) {
-    // get account authorisation requirements
-    let accAuthReqs: AccAuthReq[];
-    try {
-        accAuthReqs = await determineAccAuthReqForTxn(txn, horizonURL)
-    } catch (e) {
-        console.error(`unable to get authorisation requirements: ${e}`);
-        throw new Error()
-    }
-
-    const signatures = txn.signatures.map((s) => (s.signature()));
-    const data = txn.hash();
-    const sign: Signer[] = [];
-
-    try {
-        for (const sig of signatures) {
-            for (const accAuthReq of accAuthReqs) {
-                for (const authSigner of accAuthReq.signers) {
-                    if (signedBySigner(authSigner, data, sig)) {
-                        sign.push(authSigner)
-                    }
-                }
-            }
-        }
-    } catch (e) {
-        console.error('unable', e);
-    }
-
-    console.log(sign)
 }
