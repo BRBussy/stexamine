@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function LandingPage() {
     const classes = useStyles();
     const [xdrString, setXDRString] = useState('AAAAANORsbuSkqxgb/eqzblXLhlbyyoUzHPHvLtZ2ovUzz0aAAABLAAKLKUAAAAOAAAAAQAAAABe4XQAAAAAAF7kFv8AAAAAAAAAAwAAAAEAAAAACz6/QHwR9wauEK9svoz2vvLdVQmI5fcIRg8Q7FIRf0MAAAABAAAAAJGj01gLhCoxsJWb4esLbrGBnXGwhzx/Z27c9mIF5p2MAAAAAVpBUgAAAAAANpE76cTTrt2K+N23jllq6yAMBJyT5UcyYPNV76HFb50AAAAAHc1lAAAAAAEAAAAACz6/QHwR9wauEK9svoz2vvLdVQmI5fcIRg8Q7FIRf0MAAAABAAAAAO26MSgGvtUW+yzC7AB5uccLBAT6y5XNcX+EdBJ5J/ulAAAAAkRCMDRENAAAAAAAAAAAAAATOFwFI/oo9xyImrrraO+G89C0YJmUd4JJkh7WMmxKDQAAAAABMS0AAAAAAQAAAADtujEoBr7VFvsswuwAebnHCwQE+suVzXF/hHQSeSf7pQAAAAEAAAAACz6/QHwR9wauEK9svoz2vvLdVQmI5fcIRg8Q7FIRf0MAAAABWkFSAAAAAAA2kTvpxNOu3Yr43beOWWrrIAwEnJPlRzJg81XvocVvnQAHGv1JjQAAAAAAAAAAAAPUzz0aAAAAQGMvLfr7u9QZrecd8p+F5C0dMKJyvOvOzaHWcEDAkiOa36YgtWypu/hjTHsUFbsp/f9ddYKCKVvzOkLSZWpk9w760huXAAAAQL1Exo6JYfqB9XMsQMTfDdxvV4AD/LHYUrX274+bEmhQH55ZTUCaaxdJfNsP+tLEzXCBj2tjOUZSqWdS1EnZlQfiggWsAAAAQAiCDHv4ixZ708tSbHaTh+oENwPV3tXOzTjWtszloLTAP8onnx0C4dE349M7hngT1r/myi2Qmkok8Z3KXW8pNQ0=');
-    const [, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [parsingError, setParsingError] = useState(false);
     const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
     const usedColors = useRef<{ [key: string]: string }>({})
@@ -105,97 +105,111 @@ export default function LandingPage() {
                     />
                 </CardContent>
             </Card>
-            {transaction &&
-            <React.Fragment>
-                <Grid container spacing={2}>
-                    <Grid item>
-                        <Card>
-                            <CardContent>
-                                <DisplayField
-                                    label={'Sequence'}
-                                    value={transaction.sequence}
-                                />
-                                <AccountCard
-                                    accountID={transaction.source}
-                                    horizonURL={network}
-                                    getRandomColorForKey={getRandomColorForKey}
-                                    label={'Transaction Source'}
-                                    invertColors
-                                />
-                                <DisplayField
-                                    label={'Network'}
-                                    value={transaction.networkPassphrase}
-                                />
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item>
-                        <Card>
-                            <CardHeader
-                                title={'Time-bounds'}
-                                titleTypographyProps={{variant: 'body1'}}
-                            />
-                            <CardContent>
-                                {transaction.timeBounds
-                                    ? (
-                                        <React.Fragment>
+            {(() => {
+                if (loading) {
+                    return (
+                        <div>loading...</div>
+                    )
+                }
+                if (transaction) {
+                    return (
+                        <React.Fragment>
+                            <Grid container spacing={2}>
+                                <Grid item>
+                                    <Card>
+                                        <CardContent>
                                             <DisplayField
-                                                label={'Start'}
-                                                value={moment.unix(+transaction.timeBounds.minTime).format('LLL')}
+                                                label={'Sequence'}
+                                                value={transaction.sequence}
+                                            />
+                                            <AccountCard
+                                                accountID={transaction.source}
+                                                horizonURL={network}
+                                                getRandomColorForKey={getRandomColorForKey}
+                                                label={'Transaction Source'}
+                                                invertColors
                                             />
                                             <DisplayField
-                                                label={'End'}
-                                                value={moment.unix(+transaction.timeBounds.maxTime).format('LLL')}
+                                                label={'Network'}
+                                                value={transaction.networkPassphrase}
                                             />
-                                        </React.Fragment>
-                                    )
-                                    : 'not set'
-                                }
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
-                <Card>
-                    <CardHeader
-                        title={'Operations'}
-                        titleTypographyProps={{variant: 'body1'}}
-                    />
-                    <CardContent>
-                        <Grid container spacing={1}>
-                            {transaction.operations.map((op, idx) => (
-                                <Grid item key={idx}>
-                                    <OperationCard
-                                        key={idx}
-                                        operation={op}
-                                        getRandomColorForKey={getRandomColorForKey}
-                                        network={network}
-                                        transactionSource={transaction.source}
-                                    />
+                                        </CardContent>
+                                    </Card>
                                 </Grid>
-                            ))}
-                        </Grid>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader
-                        title={'Signature Details'}
-                        titleTypographyProps={{variant: 'body1'}}
-                    />
-                    <CardContent>
-                        <Grid container direction={'column'} spacing={1}>
-                            {requiredAccountAuthorisations.map((accAuthReq, idx) => (
-                                <Grid item key={idx}>
-                                    <AccountAuthReq
-                                        accAuthReq={accAuthReq}
-                                        getRandomColorForKey={getRandomColorForKey}
-                                        transaction={transaction}
-                                    />
+                                <Grid item>
+                                    <Card>
+                                        <CardHeader
+                                            title={'Time-bounds'}
+                                            titleTypographyProps={{variant: 'body1'}}
+                                        />
+                                        <CardContent>
+                                            {transaction.timeBounds
+                                                ? (
+                                                    <React.Fragment>
+                                                        <DisplayField
+                                                            label={'Start'}
+                                                            value={moment.unix(+transaction.timeBounds.minTime).format('LLL')}
+                                                        />
+                                                        <DisplayField
+                                                            label={'End'}
+                                                            value={moment.unix(+transaction.timeBounds.maxTime).format('LLL')}
+                                                        />
+                                                    </React.Fragment>
+                                                )
+                                                : 'not set'
+                                            }
+                                        </CardContent>
+                                    </Card>
                                 </Grid>
-                            ))}
-                        </Grid>
-                    </CardContent>
-                </Card>
-            </React.Fragment>}
+                            </Grid>
+                            <Card>
+                                <CardHeader
+                                    title={'Operations'}
+                                    titleTypographyProps={{variant: 'body1'}}
+                                />
+                                <CardContent>
+                                    <Grid container spacing={1}>
+                                        {transaction.operations.map((op, idx) => (
+                                            <Grid item key={idx}>
+                                                <OperationCard
+                                                    key={idx}
+                                                    operation={op}
+                                                    getRandomColorForKey={getRandomColorForKey}
+                                                    network={network}
+                                                    transactionSource={transaction.source}
+                                                />
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader
+                                    title={'Signature Details'}
+                                    titleTypographyProps={{variant: 'body1'}}
+                                />
+                                <CardContent>
+                                    <Grid container direction={'column'} spacing={1}>
+                                        {requiredAccountAuthorisations.map((accAuthReq, idx) => (
+                                            <Grid item key={idx}>
+                                                <AccountAuthReq
+                                                    accAuthReq={accAuthReq}
+                                                    getRandomColorForKey={getRandomColorForKey}
+                                                    transaction={transaction}
+                                                />
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+                        </React.Fragment>
+                    )
+                }
+
+                return (
+                    <div>error</div>
+                )
+            })()}
         </div>
     )
 }
