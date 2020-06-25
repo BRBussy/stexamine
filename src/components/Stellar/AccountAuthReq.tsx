@@ -41,6 +41,18 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: 'grid',
         gridTemplateColumns: '1fr auto',
         alignItems: 'center'
+    },
+    authMetResultLayout: {
+        display: 'grid',
+        gridTemplateColumns: 'auto auto',
+        alignItems: 'center',
+        gridColumnGap: theme.spacing(1)
+    },
+    success: {
+        color: theme.palette.success.main
+    },
+    error: {
+        color: theme.palette.error.main
     }
 }));
 
@@ -75,14 +87,26 @@ export default function AccAuthReqCard(props: Props) {
                         />
                         {authMet.met
                             ? (
-                                <Icon>
-                                    <MetIcon/>
-                                </Icon>
+                                <div className={classes.authMetResultLayout}>
+                                    <Icon className={classes.success}>
+                                        <MetIcon/>
+                                    </Icon>
+                                    <Typography
+                                        children={'Met'}
+                                        className={classes.success}
+                                    />
+                                </div>
                             )
                             : (
-                                <Icon>
-                                    <NotMetIcon/>
-                                </Icon>
+                                <div className={classes.authMetResultLayout}>
+                                    <Icon>
+                                        <NotMetIcon className={classes.error}/>
+                                    </Icon>
+                                    <Typography
+                                        children={'Not Met'}
+                                        className={classes.success}
+                                    />
+                                </div>
                             )
                         }
                         <Tooltip
