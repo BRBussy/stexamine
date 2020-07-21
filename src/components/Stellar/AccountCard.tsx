@@ -163,7 +163,7 @@ export default function AccountCard(props: Props) {
                                                                 return (
                                                                     <DisplayField
                                                                         key={idx}
-                                                                        label={otherBalance.asset_code}
+                                                                        label={`${otherBalance.asset_code} - [ ${otherBalance.asset_issuer} ]`}
                                                                         value={otherBalance.balance}
                                                                         labelTypographyProps={{
                                                                             style: {
