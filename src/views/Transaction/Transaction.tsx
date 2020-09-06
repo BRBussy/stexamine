@@ -7,7 +7,7 @@ import {
     Theme,
     TextareaAutosize, Grid
 } from '@material-ui/core'
-import {xdr, Transaction, Networks} from 'stellar-sdk';
+import {xdr, Transaction, FeeBumpTransaction, Networks} from 'stellar-sdk';
 import {DisplayField} from 'components/Form'
 import moment from 'moment';
 import OperationCard from './OperationCard';
@@ -48,6 +48,7 @@ export default function LandingPage() {
     const [loading, setLoading] = useState(false);
     const [parsingError, setParsingError] = useState(false);
     const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
+    const [feeBumpTransaction, setFeeBumpTransaction] = useState<FeeBumpTransaction | undefined>(undefined);
     const usedColors = useRef<{ [key: string]: string }>({})
     const [network] = useState('https://horizon-testnet.stellar.org');
     const [requiredAccountAuthorisations, setRequiredAccountAuthorisations] = useState<AccAuthReq[]>([])
@@ -71,6 +72,19 @@ export default function LandingPage() {
         (async () => {
             setLoading(true);
             setParsingError(false);
+            // first try parse as feebump txn
+            try {
+                const txnEnv = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
+                const newTxn = new FeeBumpTransaction(txnEnv, Networks.TESTNET);
+                setFeeBumpTransaction(newTxn)
+                setTransaction(newTxn.innerTransaction);
+                setRequiredAccountAuthorisations(await determineAccAuthReqForTxn(newTxn.innerTransaction, network));
+                setLoading(false);
+                return;
+            } catch (e) {
+                console.info('transaction is not fee bump')
+            }
+
             try {
                 const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
                 const newTxn = new Transaction(transactionEnvelope, Networks.TESTNET);
@@ -105,6 +119,25 @@ export default function LandingPage() {
                     />
                 </CardContent>
             </Card>
+            {feeBumpTransaction && <Card>
+                <CardHeader
+                    title={'Fee-bump envelope'}
+                    titleTypographyProps={{variant: 'body1'}}
+                />
+                <CardContent>
+                    <AccountCard
+                        accountID={feeBumpTransaction.feeSource}
+                        horizonURL={network}
+                        getRandomColorForKey={getRandomColorForKey}
+                        label={'Fee-bump Source Account'}
+                        invertColors
+                    />
+                    <DisplayField
+                        label={'Fee'}
+                        value={`${feeBumpTransaction.fee}`}
+                    />
+                </CardContent>
+            </Card>}
             {(() => {
                 if (loading) {
                     return (
