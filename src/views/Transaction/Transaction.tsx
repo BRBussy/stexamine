@@ -70,6 +70,8 @@ export default function LandingPage() {
             return;
         }
         (async () => {
+            setTransaction(undefined);
+            setFeeBumpTransaction(undefined);
             setLoading(true);
             setParsingError(false);
             // first try parse as feebump txn
@@ -230,7 +232,7 @@ export default function LandingPage() {
 
                 if (feeBumpTransaction) {
                     return (
-                        <Card>
+                        <Card className={classes.bodyCard}>
                             <CardHeader
                                 title={'Fee-bump envelope'}
                                 titleTypographyProps={{variant: 'body1'}}
@@ -241,13 +243,16 @@ export default function LandingPage() {
                                     horizonURL={network}
                                     getRandomColorForKey={getRandomColorForKey}
                                     label={'Fee-bump Source Account'}
-                                    invertColors
                                 />
                                 <DisplayField
                                     label={'Fee'}
                                     value={`${+feeBumpTransaction.fee / 10000000} XLM --> ${feeBumpTransaction.fee} (raw)`}
                                 />
                             </CardContent>
+                            <CardHeader
+                                title={'Inner Transaction Envelope'}
+                                titleTypographyProps={{variant: 'body1'}}
+                            />
                             <CardContent>
                                 {allTransactionContent}
                             </CardContent>
