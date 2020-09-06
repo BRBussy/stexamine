@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function LandingPage() {
     const classes = useStyles();
-    const [xdrString, setXDRString] = useState('AAAAANORsbuSkqxgb/eqzblXLhlbyyoUzHPHvLtZ2ovUzz0aAAABLAAKLKUAAAAOAAAAAQAAAABe4XQAAAAAAF7kFv8AAAAAAAAAAwAAAAEAAAAACz6/QHwR9wauEK9svoz2vvLdVQmI5fcIRg8Q7FIRf0MAAAABAAAAAJGj01gLhCoxsJWb4esLbrGBnXGwhzx/Z27c9mIF5p2MAAAAAVpBUgAAAAAANpE76cTTrt2K+N23jllq6yAMBJyT5UcyYPNV76HFb50AAAAAHc1lAAAAAAEAAAAACz6/QHwR9wauEK9svoz2vvLdVQmI5fcIRg8Q7FIRf0MAAAABAAAAAO26MSgGvtUW+yzC7AB5uccLBAT6y5XNcX+EdBJ5J/ulAAAAAkRCMDRENAAAAAAAAAAAAAATOFwFI/oo9xyImrrraO+G89C0YJmUd4JJkh7WMmxKDQAAAAABMS0AAAAAAQAAAADtujEoBr7VFvsswuwAebnHCwQE+suVzXF/hHQSeSf7pQAAAAEAAAAACz6/QHwR9wauEK9svoz2vvLdVQmI5fcIRg8Q7FIRf0MAAAABWkFSAAAAAAA2kTvpxNOu3Yr43beOWWrrIAwEnJPlRzJg81XvocVvnQAHGv1JjQAAAAAAAAAAAAPUzz0aAAAAQGMvLfr7u9QZrecd8p+F5C0dMKJyvOvOzaHWcEDAkiOa36YgtWypu/hjTHsUFbsp/f9ddYKCKVvzOkLSZWpk9w760huXAAAAQL1Exo6JYfqB9XMsQMTfDdxvV4AD/LHYUrX274+bEmhQH55ZTUCaaxdJfNsP+tLEzXCBj2tjOUZSqWdS1EnZlQfiggWsAAAAQAiCDHv4ixZ708tSbHaTh+oENwPV3tXOzTjWtszloLTAP8onnx0C4dE349M7hngT1r/myi2Qmkok8Z3KXW8pNQ0=');
+    const [xdrString, setXDRString] = useState('');
     const [loading, setLoading] = useState(false);
     const [parsingError, setParsingError] = useState(false);
     const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
@@ -236,6 +236,12 @@ export default function LandingPage() {
                                 </CardContent>
                             </Card>
                         </React.Fragment>
+                    )
+                }
+
+                if (xdrString === '') {
+                    return (
+                        <div/>
                     )
                 }
 
