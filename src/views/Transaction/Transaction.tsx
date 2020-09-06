@@ -119,33 +119,22 @@ export default function LandingPage() {
                     />
                 </CardContent>
             </Card>
-            {feeBumpTransaction && <Card>
-                <CardHeader
-                    title={'Fee-bump envelope'}
-                    titleTypographyProps={{variant: 'body1'}}
-                />
-                <CardContent>
-                    <AccountCard
-                        accountID={feeBumpTransaction.feeSource}
-                        horizonURL={network}
-                        getRandomColorForKey={getRandomColorForKey}
-                        label={'Fee-bump Source Account'}
-                        invertColors
-                    />
-                    <DisplayField
-                        label={'Fee'}
-                        value={`${+feeBumpTransaction.fee / 10000000} XLM --> ${feeBumpTransaction.fee} (raw)`}
-                    />
-                </CardContent>
-            </Card>}
             {(() => {
                 if (loading) {
                     return (
                         <div>loading...</div>
                     )
                 }
-                if (transaction) {
+
+                if (xdrString === '') {
                     return (
+                        <div/>
+                    )
+                }
+
+                let allTransactionContent = (<div>no txn content</div>)
+                if (transaction) {
+                    allTransactionContent = (
                         <React.Fragment>
                             <Grid container spacing={2}>
                                 <Grid item>
@@ -239,15 +228,34 @@ export default function LandingPage() {
                     )
                 }
 
-                if (xdrString === '') {
+                if (feeBumpTransaction) {
                     return (
-                        <div/>
+                        <Card>
+                            <CardHeader
+                                title={'Fee-bump envelope'}
+                                titleTypographyProps={{variant: 'body1'}}
+                            />
+                            <CardContent>
+                                <AccountCard
+                                    accountID={feeBumpTransaction.feeSource}
+                                    horizonURL={network}
+                                    getRandomColorForKey={getRandomColorForKey}
+                                    label={'Fee-bump Source Account'}
+                                    invertColors
+                                />
+                                <DisplayField
+                                    label={'Fee'}
+                                    value={`${+feeBumpTransaction.fee / 10000000} XLM --> ${feeBumpTransaction.fee} (raw)`}
+                                />
+                            </CardContent>
+                            <CardContent>
+                                {allTransactionContent}
+                            </CardContent>
+                        </Card>
                     )
+                } else {
+                    return allTransactionContent
                 }
-
-                return (
-                    <div>error</div>
-                )
             })()}
         </div>
     )
