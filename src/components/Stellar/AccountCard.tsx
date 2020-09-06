@@ -158,12 +158,13 @@ export default function AccountCard(props: Props) {
                                                                 const otherBalance = b as any as {
                                                                     balance: string,
                                                                     asset_code: string,
-                                                                    asset_issuer: string
+                                                                    asset_issuer: string,
+                                                                    limit: string
                                                                 }
                                                                 return (
                                                                     <DisplayField
                                                                         key={idx}
-                                                                        label={`${otherBalance.asset_code} - [ ${otherBalance.asset_issuer} ]`}
+                                                                        label={`${otherBalance.asset_code} - [ ${otherBalance.asset_issuer} ] - Limit: ${otherBalance.limit}`}
                                                                         value={otherBalance.balance}
                                                                         labelTypographyProps={{
                                                                             style: {

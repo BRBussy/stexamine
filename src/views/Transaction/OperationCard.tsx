@@ -23,6 +23,16 @@ export default function OperationCard(props: OperationCardProps) {
                 />
             )
 
+        case 'changeTrust':
+            return (
+                <ChangeTrustOperationCard
+                    network={props.network}
+                    transactionSource={props.transactionSource}
+                    operation={props.operation as Operation.ChangeTrust}
+                    getRandomColorForKey={props.getRandomColorForKey}
+                />
+            )
+
         case 'setOptions':
             return (
                 <SetOptionsOperationCard
@@ -143,6 +153,86 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
     )
 }
 
+interface ChangeTrustOperationCardProps {
+    transactionSource?: string;
+    operation: Operation.ChangeTrust;
+    network: string;
+    getRandomColorForKey: (key: string) => string;
+}
+
+const useChangeTrustOperationCardStyles = makeStyles((theme: Theme) => ({
+    bodyCard: {
+        backgroundColor: theme.palette.background.default
+    },
+    accountCardHeader: {
+        display: 'grid',
+        gridTemplateColumns: '1fr auto',
+        alignItems: 'center'
+    }
+}));
+
+function ChangeTrustOperationCard(props: ChangeTrustOperationCardProps) {
+    const classes = useChangeTrustOperationCardStyles();
+
+    const assetCodeColor = props.getRandomColorForKey(props.operation.line.code);
+    const assetIssuanceAccountColor = props.getRandomColorForKey(props.operation.line.issuer);
+
+    const operationSourceAccount = props.operation.source
+        ? props.operation.source
+        : props.transactionSource
+            ? props.transactionSource
+            : 'no source'
+
+    return (
+        <Card className={classes.bodyCard}>
+            <CardContent>
+                <DisplayField
+                    label={'Type'}
+                    value={'Change Trust'}
+                />
+            </CardContent>
+            <CardContent>
+                {/* Operation Source Account */}
+                <AccountCard
+                    label={'Source'}
+                    accountID={operationSourceAccount}
+                    horizonURL={props.network}
+                    getRandomColorForKey={props.getRandomColorForKey}
+                />
+
+                <div style={{height: 8}}/>
+
+                <DisplayField
+                    label={'Limit'}
+                    value={props.operation.limit}
+                    valueTypographyProps={{style: {color: assetCodeColor}}}
+                />
+                <Grid container>
+                    <Grid item>
+                        <Card>
+                            <CardHeader
+                                title={'Asset'}
+                                titleTypographyProps={{variant: 'caption'}}
+                            />
+                            <CardContent>
+                                <DisplayField
+                                    label={'Code'}
+                                    value={props.operation.line.code}
+                                    valueTypographyProps={{style: {color: assetCodeColor}}}
+                                />
+                                <DisplayField
+                                    label={'Issuer'}
+                                    value={props.operation.line.issuer}
+                                    valueTypographyProps={{style: {color: assetIssuanceAccountColor}}}
+                                />
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
+            </CardContent>
+        </Card>
+    )
+}
 
 const useSetOptionsOperationCardStyles = makeStyles((theme: Theme) => ({
     bodyCard: {
