@@ -134,7 +134,7 @@ export default function LandingPage() {
                     />
                     <DisplayField
                         label={'Fee'}
-                        value={`${feeBumpTransaction.fee}`}
+                        value={`${+feeBumpTransaction.fee / 10000000} XLM --> ${feeBumpTransaction.fee} (raw)`}
                     />
                 </CardContent>
             </Card>}
