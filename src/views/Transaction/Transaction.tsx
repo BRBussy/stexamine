@@ -7,9 +7,13 @@ import OperationCard from './OperationCard';
 import cx from 'classnames';
 import {getRandomColor} from 'utilities/color';
 import {AccountCard} from 'components/Stellar';
-import {AccAuthReq, determineAccAuthReqForTxn} from 'utilities/stellar';
-import AccountAuthReq from 'components/Stellar/AccountAuthReq';
-import {StellarHorizonURL, Wrapper} from '../../utilities/stellar/Wrapper';
+
+import {
+    AnalyseTransactionSignaturesResult,
+    SignatureAnalysisResult,
+    StellarHorizonURL,
+    Wrapper
+} from 'utilities/stellar/Wrapper';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -45,8 +49,13 @@ export default function LandingPage() {
     const [feeBumpTransaction, setFeeBumpTransaction] = useState<FeeBumpTransaction | undefined>(undefined);
     const usedColors = useRef<{ [key: string]: string }>({})
     const [network] = useState('https://horizon-testnet.stellar.org');
-    const [requiredAccountAuthorisations, setRequiredAccountAuthorisations] = useState<AccAuthReq[]>([])
     const {current: stellarWrapper} = useRef(new Wrapper(StellarHorizonURL.Test))
+    const [feeBumpTransactionSignatureAnalysisResult, setFeeBumpTransactionSignatureAnalysisResult] = useState<AnalyseTransactionSignaturesResult>({
+        publicKey: '',
+        signature: '',
+        result: SignatureAnalysisResult.unknown
+    });
+    const [transactionSignatureAnalysisResults, setTransactionSignatureAnalysisResults] = useState<AnalyseTransactionSignaturesResult[]>([]);
 
     const getRandomColorForKey = (key: string) => {
         // if a color is already stored for this key, use it
@@ -73,9 +82,13 @@ export default function LandingPage() {
             try {
                 const txnEnv = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
                 const newTxn = new FeeBumpTransaction(txnEnv, Networks.TESTNET);
+                const feeBumpTxnSigAnalResp = await stellarWrapper.analyseFeeBumpTransactionSignatures({
+                    transaction: newTxn
+                })
+                setFeeBumpTransactionSignatureAnalysisResult(feeBumpTxnSigAnalResp.feeBumpResult);
+                setTransactionSignatureAnalysisResults(feeBumpTxnSigAnalResp.innerTransactionResults);
                 setFeeBumpTransaction(newTxn)
                 setTransaction(newTxn.innerTransaction);
-                setRequiredAccountAuthorisations(await determineAccAuthReqForTxn(newTxn.innerTransaction, network));
                 setLoading(false);
                 return;
             } catch (e) {
@@ -85,11 +98,10 @@ export default function LandingPage() {
             try {
                 const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
                 const newTxn = new Transaction(transactionEnvelope, Networks.TESTNET);
-                console.log(await stellarWrapper.analyseTransactionSignatures({
+                setTransactionSignatureAnalysisResults((await stellarWrapper.analyseTransactionSignatures({
                     transaction: newTxn
-                }));
+                })).results);
                 setTransaction(newTxn);
-                setRequiredAccountAuthorisations(await determineAccAuthReqForTxn(newTxn, network));
             } catch (e) {
                 console.error('error parsing transaction xdr', e);
                 setParsingError(true);
@@ -216,15 +228,6 @@ export default function LandingPage() {
                                 />
                                 <CardContent>
                                     <Grid container direction={'column'} spacing={1}>
-                                        {requiredAccountAuthorisations.map((accAuthReq, idx) => (
-                                            <Grid item key={idx}>
-                                                <AccountAuthReq
-                                                    accAuthReq={accAuthReq}
-                                                    getRandomColorForKey={getRandomColorForKey}
-                                                    transaction={transaction}
-                                                />
-                                            </Grid>
-                                        ))}
                                     </Grid>
                                 </CardContent>
                             </Card>
