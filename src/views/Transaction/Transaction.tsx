@@ -227,8 +227,30 @@ export default function LandingPage() {
                                     titleTypographyProps={{variant: 'body1'}}
                                 />
                                 <CardContent>
-                                    <Grid container direction={'column'} spacing={1}>
-                                    </Grid>
+                                    {transactionSignatureAnalysisResults.length
+                                        ? (
+                                            <Grid container direction={'column'} spacing={1}>
+                                                {transactionSignatureAnalysisResults.map((r, i) => (
+                                                    <Grid item key={i}>
+                                                        <DisplayField
+                                                            label={'Signature'}
+                                                            value={r.signature}
+                                                        />
+                                                        <DisplayField
+                                                            label={'Public Key'}
+                                                            value={r.publicKey}
+                                                            valueTypographyProps={{style: {color: getRandomColorForKey(r.publicKey)}}}
+                                                        />
+                                                        <DisplayField
+                                                            label={'Result'}
+                                                            value={r.result}
+                                                        />
+                                                    </Grid>
+                                                ))}
+                                            </Grid>
+                                        )
+                                        : 'No Signatures on Transaction'
+                                    }
                                 </CardContent>
                             </Card>
                         </React.Fragment>
