@@ -1,13 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {
-    makeStyles,
-    Card,
-    CardContent,
-    CardHeader,
-    Theme,
-    TextareaAutosize, Grid
-} from '@material-ui/core'
-import {xdr, Transaction, FeeBumpTransaction, Networks} from 'stellar-sdk';
+import {Card, CardContent, CardHeader, Grid, makeStyles, TextareaAutosize, Theme} from '@material-ui/core'
+import {FeeBumpTransaction, Networks, Transaction, xdr} from 'stellar-sdk';
 import {DisplayField} from 'components/Form'
 import moment from 'moment';
 import OperationCard from './OperationCard';
@@ -16,6 +9,7 @@ import {getRandomColor} from 'utilities/color';
 import {AccountCard} from 'components/Stellar';
 import {AccAuthReq, determineAccAuthReqForTxn} from 'utilities/stellar';
 import AccountAuthReq from 'components/Stellar/AccountAuthReq';
+import {StellarHorizonURL, Wrapper} from '../../utilities/stellar/Wrapper';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -52,6 +46,7 @@ export default function LandingPage() {
     const usedColors = useRef<{ [key: string]: string }>({})
     const [network] = useState('https://horizon-testnet.stellar.org');
     const [requiredAccountAuthorisations, setRequiredAccountAuthorisations] = useState<AccAuthReq[]>([])
+    const {current: stellarWrapper} = useRef(new Wrapper(StellarHorizonURL.Test))
 
     const getRandomColorForKey = (key: string) => {
         // if a color is already stored for this key, use it
@@ -90,6 +85,7 @@ export default function LandingPage() {
             try {
                 const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
                 const newTxn = new Transaction(transactionEnvelope, Networks.TESTNET);
+                console.log(await stellarWrapper.analyseTransactionSignatures(newTxn));
                 setTransaction(newTxn);
                 setRequiredAccountAuthorisations(await determineAccAuthReqForTxn(newTxn, network));
             } catch (e) {

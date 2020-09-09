@@ -58,15 +58,17 @@ export class Wrapper {
                 console.error(`error getting txn source account signatories: ${e}`);
             }
         }
-        for (let op of tx.operations) {
-            if (op.source) {
-                try {
-                    signers.push(...(await this.getAccountSigners(op.source)))
-                } catch (e) {
-                    console.error(`error getting txn source account signatories: ${e}`);
+        await Promise.all(
+            tx.operations.map(async (op) => {
+                if (op.source) {
+                    try {
+                        signers.push(...(await this.getAccountSigners(op.source)))
+                    } catch (e) {
+                        console.error(`error getting txn source account signatories: ${e}`);
+                    }
                 }
-            }
-        }
+            })
+        )
 
         return results
     }
