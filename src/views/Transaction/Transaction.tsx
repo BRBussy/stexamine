@@ -94,7 +94,7 @@ export default function LandingPage() {
             }
             setLoading(false);
         })()
-    }, [xdrString, network])
+    }, [xdrString, network, stellarWrapper])
 
     return (
         <div className={classes.root}>

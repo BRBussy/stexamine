@@ -49,8 +49,8 @@ export class Wrapper {
     async analyseTransactionSignatures(tx: Transaction): Promise<{ publicKey: string, result: SignatureAnalysisResult }[]> {
         const results: { publicKey: string, result: SignatureAnalysisResult }[] = []
         const signers: ServerApi.AccountRecordSigners[] = [];
-        // get all potential signers across all source accounts
 
+        // get all potential signers on transaction source account
         if (tx.source) {
             try {
                 signers.push(...(await this.getAccountSigners(tx.source)))
@@ -58,6 +58,8 @@ export class Wrapper {
                 console.error(`error getting txn source account signatories: ${e}`);
             }
         }
+
+        // get all potential signers across all operation source accounts
         await Promise.all(
             tx.operations.map(async (op) => {
                 if (op.source) {
