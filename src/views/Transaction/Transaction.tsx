@@ -157,6 +157,10 @@ export default function LandingPage() {
                                                 label={'Network'}
                                                 value={transaction.networkPassphrase}
                                             />
+                                            <DisplayField
+                                                label={'Base Fee'}
+                                                value={transaction.fee}
+                                            />
                                         </CardContent>
                                     </Card>
                                 </Grid>
