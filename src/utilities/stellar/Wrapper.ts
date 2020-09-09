@@ -1,6 +1,7 @@
 import {
     Transaction, Server, AccountResponse,
-    Keypair, xdr, Signer, Account, ServerApi
+    Keypair, xdr, Signer, Account, ServerApi,
+    FeeBumpTransaction
 } from 'stellar-sdk';
 import {isEqual} from 'lodash';
 
@@ -11,6 +12,29 @@ export enum StellarHorizonURL {
 export enum SignatureAnalysisResult {
     verified = 'Verified',
     unknown = 'Unknown'
+}
+
+export interface AnalyseTransactionSignaturesResult {
+    signature: string;
+    publicKey: string;
+    result: SignatureAnalysisResult;
+}
+
+export interface AnalyseTransactionSignaturesRequest {
+    transaction: Transaction;
+}
+
+export interface AnalyseTransactionSignaturesResponse {
+    results: AnalyseTransactionSignaturesResult[];
+}
+
+export interface AnalyseFeeBumpTransactionSignaturesRequest {
+    transaction: FeeBumpTransaction;
+}
+
+export interface AnalyseFeeBumpTransactionSignaturesResponse {
+    feeBumpResult: AnalyseTransactionSignaturesResult;
+    innerTransactionResults: AnalyseTransactionSignaturesResult[];
 }
 
 export class Wrapper {
@@ -41,26 +65,14 @@ export class Wrapper {
         }
     }
 
-    async analyseFeeBumpTransactionSignatures() {
-
-    }
-
-    async analyseTransactionSignatures(tx: Transaction): Promise<{
-        signature: string,
-        publicKey: string,
-        result: SignatureAnalysisResult
-    }[]> {
-        const results: {
-            signature: string,
-            publicKey: string,
-            result: SignatureAnalysisResult
-        }[] = []
+    async analyseTransactionSignatures(request: AnalyseTransactionSignaturesRequest): Promise<AnalyseTransactionSignaturesResponse> {
+        const results: AnalyseTransactionSignaturesResult[] = []
         const signers: ServerApi.AccountRecordSigners[] = [];
 
         // get all potential signers on transaction source account
-        if (tx.source) {
+        if (request.transaction.source) {
             try {
-                signers.push(...(await this.getAccountSigners(tx.source)).filter((signerForThisAccount) => !(
+                signers.push(...(await this.getAccountSigners(request.transaction.source)).filter((signerForThisAccount) => !(
                         signers.find(
                             (existingSigner) => (isEqual(existingSigner, signerForThisAccount))
                         )
@@ -73,7 +85,7 @@ export class Wrapper {
 
         // get all potential signers across all operation source accounts
         await Promise.all(
-            tx.operations.map(async (op) => {
+            request.transaction.operations.map(async (op) => {
                 if (op.source) {
                     try {
                         signers.push(...(await this.getAccountSigners(op.source)).filter((signerForThisAccount) => !(
@@ -89,10 +101,10 @@ export class Wrapper {
             })
         )
 
-        const txnData = tx.hash();
+        const txnData = request.transaction.hash();
         // for every signature...
         nextSignature:
-            for (const sig of tx.signatures) {
+            for (const sig of request.transaction.signatures) {
                 // try and verify with each potential signer...
                 for (const potentialSigner of signers) {
                     try {
@@ -118,7 +130,20 @@ export class Wrapper {
                 })
             }
 
-        return results
+        return {results}
+    }
+
+    async analyseFeeBumpTransactionSignatures(request: AnalyseFeeBumpTransactionSignaturesRequest): Promise<AnalyseFeeBumpTransactionSignaturesResponse> {
+        return {
+            feeBumpResult: {
+                publicKey: '',
+                signature: '',
+                result: SignatureAnalysisResult.unknown
+            },
+            innerTransactionResults: (await this.analyseTransactionSignatures({
+                transaction: request.transaction.innerTransaction
+            })).results
+        }
     }
 }
 

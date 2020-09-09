@@ -85,7 +85,9 @@ export default function LandingPage() {
             try {
                 const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(xdrString, 'base64');
                 const newTxn = new Transaction(transactionEnvelope, Networks.TESTNET);
-                console.log(await stellarWrapper.analyseTransactionSignatures(newTxn));
+                console.log(await stellarWrapper.analyseTransactionSignatures({
+                    transaction: newTxn
+                }));
                 setTransaction(newTxn);
                 setRequiredAccountAuthorisations(await determineAccAuthReqForTxn(newTxn, network));
             } catch (e) {
