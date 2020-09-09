@@ -19,6 +19,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/stellar-sdk": "^0.15.1",
     "classnames": "^2.2.6",
+    "lodash": "^4.17.20",
     "moment": "^2.25.3",
     "numeral": "^2.0.6",
     "react": "^16.13.1",
