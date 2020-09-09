@@ -42,6 +42,16 @@ export default function OperationCard(props: OperationCardProps) {
                     getRandomColorForKey={props.getRandomColorForKey}
                 />
             )
+
+        case 'allowTrust':
+            return (
+                <AllowTrustOperationCard
+                    network={props.network}
+                    transactionSource={props.transactionSource}
+                    operation={props.operation as Operation.AllowTrust}
+                    getRandomColorForKey={props.getRandomColorForKey}
+                />
+            )
     }
 
     return (
@@ -153,6 +163,95 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
     )
 }
 
+interface AllowTrustOperationCardProps {
+    transactionSource?: string;
+    operation: Operation.AllowTrust;
+    network: string;
+    getRandomColorForKey: (key: string) => string;
+}
+
+const useAllowTrustOperationCardStyles = makeStyles((theme: Theme) => ({
+    bodyCard: {
+        backgroundColor: theme.palette.background.default
+    },
+    accountCardHeader: {
+        display: 'grid',
+        gridTemplateColumns: '1fr auto',
+        alignItems: 'center'
+    }
+}));
+
+function AllowTrustOperationCard(props: AllowTrustOperationCardProps) {
+    const classes = useAllowTrustOperationCardStyles();
+
+    const assetCodeColor = props.getRandomColorForKey(props.operation.assetCode);
+    const trustorAccountColor = props.getRandomColorForKey(props.operation.trustor);
+
+    const operationSourceAccount = props.operation.source
+        ? props.operation.source
+        : props.transactionSource
+            ? props.transactionSource
+            : 'no source'
+
+    const sourceAccountColor = props.getRandomColorForKey(operationSourceAccount);
+
+    return (
+        <Card className={classes.bodyCard}>
+            <CardContent>
+                <DisplayField
+                    label={'Type'}
+                    value={'Allow Trust'}
+                />
+            </CardContent>
+            <CardContent>
+                {/* Operation Source Account */}
+                <AccountCard
+                    label={'Source'}
+                    accountID={operationSourceAccount}
+                    horizonURL={props.network}
+                    getRandomColorForKey={props.getRandomColorForKey}
+                />
+
+                <div style={{height: 8}}/>
+
+                <Grid container>
+                    <Grid item>
+                        <Card>
+                            <CardHeader
+                                title={'Asset'}
+                                titleTypographyProps={{variant: 'caption'}}
+                            />
+                            <CardContent>
+                                <DisplayField
+                                    label={'Code'}
+                                    value={props.operation.assetCode}
+                                    valueTypographyProps={{style: {color: assetCodeColor}}}
+                                />
+                                <DisplayField
+                                    label={'Issuer'}
+                                    value={operationSourceAccount}
+                                    valueTypographyProps={{style: {color: sourceAccountColor}}}
+                                />
+                            </CardContent>
+                            <CardContent>
+                                <DisplayField
+                                    label={'Trustor'}
+                                    value={props.operation.trustor}
+                                    valueTypographyProps={{style: {color: trustorAccountColor}}}
+                                />
+                                <DisplayField
+                                    label={'Authorize'}
+                                    value={props.operation.authorize ? 'True' : 'False'}
+                                />
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
+            </CardContent>
+        </Card>
+    )
+}
+
 interface ChangeTrustOperationCardProps {
     transactionSource?: string;
     operation: Operation.ChangeTrust;
@@ -249,7 +348,6 @@ const useSetOptionsOperationCardStyles = makeStyles((theme: Theme) => ({
         gridTemplateRows: 'auto auto'
     }
 }));
-
 
 interface SetOptionsOperationCardProps {
     transactionSource?: string;
