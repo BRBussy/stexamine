@@ -151,7 +151,7 @@ export default function AccountCard(props: Props) {
                                                                                     : theme.palette.text.primary
                                                                             }
                                                                         }}
-                                                                        value={numeral(b.balance).format('0,0.0')}
+                                                                        value={numeral(b.balance).format('0,0.0000000')}
                                                                     />
                                                                 )
 
@@ -166,7 +166,7 @@ export default function AccountCard(props: Props) {
                                                                     <DisplayField
                                                                         key={idx}
                                                                         label={`${otherBalance.asset_code} - [ ${otherBalance.asset_issuer} ] - Limit: ${otherBalance.limit}`}
-                                                                        value={numeral(otherBalance.balance).format('0,0.0')}
+                                                                        value={numeral(otherBalance.balance).format('0,0.0000000')}
                                                                         labelTypographyProps={{
                                                                             style: {
                                                                                 color: props.getRandomColorForKey
