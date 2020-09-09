@@ -14,6 +14,7 @@ import {
 import {DisplayField} from 'components/Form';
 import {ExpandLess as CloseCardBodyIcon, ExpandMore as OpenCardBodyIcon} from '@material-ui/icons';
 import cx from 'classnames';
+import numeral from 'numeral';
 
 interface Props {
     accountID: string;
@@ -150,7 +151,7 @@ export default function AccountCard(props: Props) {
                                                                                     : theme.palette.text.primary
                                                                             }
                                                                         }}
-                                                                        value={b.balance}
+                                                                        value={numeral(b.balance).format('0,0.0')}
                                                                     />
                                                                 )
 
@@ -165,7 +166,7 @@ export default function AccountCard(props: Props) {
                                                                     <DisplayField
                                                                         key={idx}
                                                                         label={`${otherBalance.asset_code} - [ ${otherBalance.asset_issuer} ] - Limit: ${otherBalance.limit}`}
-                                                                        value={otherBalance.balance}
+                                                                        value={numeral(otherBalance.balance).format('0,0.0')}
                                                                         labelTypographyProps={{
                                                                             style: {
                                                                                 color: props.getRandomColorForKey

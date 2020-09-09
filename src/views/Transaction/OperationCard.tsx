@@ -134,7 +134,7 @@ function PaymentOperationCard(props: PaymentOperationCardProps) {
 
                 <DisplayField
                     label={'Amount'}
-                    value={props.operation.amount}
+                    value={numeral(props.operation.amount).format('0,0.0')}
                     valueTypographyProps={{style: {color: assetColor}}}
                 />
                 <Grid container>
@@ -304,7 +304,7 @@ function ChangeTrustOperationCard(props: ChangeTrustOperationCardProps) {
 
                 <DisplayField
                     label={'Limit'}
-                    value={props.operation.limit}
+                    value={numeral(props.operation.limit).format('0,0.0')}
                     valueTypographyProps={{style: {color: assetCodeColor}}}
                 />
                 <Grid container>
