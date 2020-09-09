@@ -223,7 +223,7 @@ export default function LandingPage() {
                             </Card>
                             <Card>
                                 <CardHeader
-                                    title={'Signature Details'}
+                                    title={'Transaction Signature Details'}
                                     titleTypographyProps={{variant: 'body1'}}
                                 />
                                 <CardContent>
@@ -253,6 +253,37 @@ export default function LandingPage() {
                                     }
                                 </CardContent>
                             </Card>
+                            {feeBumpTransaction &&
+                            <Card>
+                                <CardHeader
+                                    title={'FeeBump Signature Details'}
+                                    titleTypographyProps={{variant: 'body1'}}
+                                />
+                                <CardContent>
+                                    {feeBumpTransactionSignatureAnalysisResult.signature
+                                        ? (
+                                            <Grid container direction={'column'} spacing={1}>
+                                                <Grid item>
+                                                    <DisplayField
+                                                        label={'Signature'}
+                                                        value={feeBumpTransactionSignatureAnalysisResult.signature}
+                                                    />
+                                                    <DisplayField
+                                                        label={'Public Key'}
+                                                        value={feeBumpTransactionSignatureAnalysisResult.publicKey}
+                                                        valueTypographyProps={{style: {color: getRandomColorForKey(feeBumpTransactionSignatureAnalysisResult.publicKey)}}}
+                                                    />
+                                                    <DisplayField
+                                                        label={'Result'}
+                                                        value={feeBumpTransactionSignatureAnalysisResult.result}
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                        )
+                                        : 'Not Signed'
+                                    }
+                                </CardContent>
+                            </Card>}
                         </React.Fragment>
                     )
                 }
