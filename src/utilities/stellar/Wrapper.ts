@@ -10,7 +10,6 @@ export enum StellarHorizonURL {
 
 export enum SignatureAnalysisResult {
     verified = 'Verified',
-    unverified = 'Unverified',
     unknown = 'Unknown'
 }
 
@@ -46,8 +45,16 @@ export class Wrapper {
 
     }
 
-    async analyseTransactionSignatures(tx: Transaction): Promise<{ publicKey: string, result: SignatureAnalysisResult }[]> {
-        const results: { publicKey: string, result: SignatureAnalysisResult }[] = []
+    async analyseTransactionSignatures(tx: Transaction): Promise<{
+        signature: string,
+        publicKey: string,
+        result: SignatureAnalysisResult
+    }[]> {
+        const results: {
+            signature: string,
+            publicKey: string,
+            result: SignatureAnalysisResult
+        }[] = []
         const signers: ServerApi.AccountRecordSigners[] = [];
 
         // get all potential signers on transaction source account
@@ -82,8 +89,54 @@ export class Wrapper {
             })
         )
 
-        console.log('signers!', signers)
+        const txnData = tx.hash();
+        // for every signature...
+        nextSignature:
+            for (const sig of tx.signatures) {
+                // try and verify with each potential signer...
+                for (const potentialSigner of signers) {
+                    try {
+                        if (signedBySigner(potentialSigner, txnData, sig.signature())) {
+                            // if it can be verified this signature is accounted for
+                            results.push({
+                                signature: sig.toXDR('base64'),
+                                publicKey: potentialSigner.key,
+                                result: SignatureAnalysisResult.verified
+                            })
+                            continue nextSignature;
+                        }
+                    } catch (e) {
+                        console.error(`error verifying: ${e}`)
+                        throw new Error(`error verifying: ${e}`)
+                    }
+                }
+                // if execution reaches here then the signature could not be verified
+                results.push({
+                    signature: sig.toXDR('base64'),
+                    publicKey: '---',
+                    result: SignatureAnalysisResult.verified
+                })
+            }
 
         return results
+    }
+}
+
+export function signedBySigner(signer: ServerApi.AccountRecordSigners, data: Buffer, signature: Buffer): boolean {
+    // parse key pair
+    let kp: Keypair;
+    try {
+        kp = Keypair.fromPublicKey(signer.key);
+    } catch (e) {
+        console.error(`unable to parse keypair: ${e}`);
+        throw new Error();
+    }
+
+    // perform verification
+    try {
+        return kp.verify(data, signature)
+    } catch (e) {
+        console.error(`error verifying signature: ${e}`);
+        throw new Error();
     }
 }
