@@ -3,6 +3,7 @@ import {Card, CardContent, CardHeader, Grid, makeStyles, Theme} from '@material-
 import {DisplayField} from 'components/Form';
 import React from 'react';
 import {AccountCard} from 'components/Stellar';
+import numeral from 'numeral';
 
 interface OperationCardProps {
     transactionSource?: string;
