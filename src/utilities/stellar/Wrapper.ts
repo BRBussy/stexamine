@@ -1,6 +1,6 @@
 import {
     Transaction, Server, AccountResponse,
-    Keypair, xdr, Signer, Account, ServerApi,
+    Keypair, ServerApi,
     FeeBumpTransaction
 } from 'stellar-sdk';
 import {isEqual} from 'lodash';
