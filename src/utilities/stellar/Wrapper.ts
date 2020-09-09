@@ -53,7 +53,12 @@ export class Wrapper {
         // get all potential signers on transaction source account
         if (tx.source) {
             try {
-                signers.push(...(await this.getAccountSigners(tx.source)))
+                signers.push(...(await this.getAccountSigners(tx.source)).filter((signerForThisAccount) => !(
+                        signers.find(
+                            (existingSigner) => (isEqual(existingSigner, signerForThisAccount))
+                        )
+                    )
+                ))
             } catch (e) {
                 console.error(`error getting txn source account signatories: ${e}`);
             }
@@ -64,13 +69,20 @@ export class Wrapper {
             tx.operations.map(async (op) => {
                 if (op.source) {
                     try {
-                        signers.push(...(await this.getAccountSigners(op.source)))
+                        signers.push(...(await this.getAccountSigners(op.source)).filter((signerForThisAccount) => !(
+                                signers.find(
+                                    (existingSigner) => (isEqual(existingSigner, signerForThisAccount))
+                                )
+                            )
+                        ))
                     } catch (e) {
                         console.error(`error getting txn source account signatories: ${e}`);
                     }
                 }
             })
         )
+
+        console.log('signers!', signers)
 
         return results
     }
