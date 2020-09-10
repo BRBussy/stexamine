@@ -160,13 +160,16 @@ export default function AccountCard(props: Props) {
                                                                     balance: string,
                                                                     asset_code: string,
                                                                     asset_issuer: string,
-                                                                    limit: string
+                                                                    limit: string,
+                                                                    is_authorized: boolean
                                                                 }
                                                                 return (
                                                                     <DisplayField
                                                                         key={idx}
-                                                                        label={`${otherBalance.asset_code} - [ ${otherBalance.asset_issuer} ] - Limit: ${otherBalance.limit}`}
-                                                                        value={numeral(otherBalance.balance).format('0,0.0000000')}
+                                                                        label={`${otherBalance.asset_code} - [ ${otherBalance.asset_issuer} ]`}
+                                                                        value={
+                                                                            <pre>{numeral(otherBalance.balance).format('0,0.0000000') +
+                                                                            `\tLimit: ${otherBalance.limit} \tAuthorized: ${otherBalance.is_authorized}`}</pre>}
                                                                         labelTypographyProps={{
                                                                             style: {
                                                                                 color: props.getRandomColorForKey
