@@ -1,10 +1,10 @@
-import React from 'react';
-import {Theme, Typography, TypographyProps} from "@material-ui/core";
-import {makeStyles} from "@material-ui/core/styles";
+import React, {ReactNode} from 'react';
+import {Theme, Typography, TypographyProps} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
 
 interface DisplayFieldProps {
     label: string;
-    value: string;
+    value: ReactNode;
     labelTypographyProps?: TypographyProps;
     valueTypographyProps?: TypographyProps;
 }
